@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static i18n django_bootstrap5 %}
+
+{% block page_title %}{{ video.timestamp }}{% endblock %}
+
+{% block content %}
+<video style="display: block; margin: 0 auto;" width="100%" height="auto"
+       preload="" controls src="{{ video.file.url }}" type="video/mp4">
+</video>
+{% endblock %}
