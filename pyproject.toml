@@ -1,13 +1,13 @@
-# Enable flake8-bugbear (`B`) rules.
-lint.select = [
-    "A", "B", "E", "F", "S", "W", "N", "G", "C4", "EM", "PL", "UP", "YTT", "INT",
-    "ISC", "ICN", "PIE", "T20", "PYI", "PT", "RET", "INT", "RUF", "FBT", "SIM", "TID",
-    "PTH",
-]
-
+[tool.ruff]
 line-length = 120
 
-lint.ignore = [
+[tool.ruff.lint]
+# Enable flake8-bugbear (`B`) rules.
+select = [
+    "E", "F", "B", "PL", "S", "W", "N", "G", "C4", "EM",
+    "ISC", "ICN", "PIE", "T20", "PYI", "PT", "RET", "INT", "RUF"
+]
+ignore = [
     "B905",  # `zip()` without an explicit `strict=` parameter
     "PT009",  # Use a regular `assert` instead of unittest-style `{assertion}`
     "S308",  # Use of `mark_safe` may expose cross-site scripting vulnerabilities
@@ -19,6 +19,20 @@ lint.ignore = [
 ]
 
 # Ignore `E501` (line length) in all `__init__.py`  and migration files
-[lint.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E501"]
 "**/migrations/*.py" = ["E501"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "cam_archive.settings"
+# -- recommended but optional:
+python_files = "tests.py"
+
+[tool.coverage.run]
+omit = [
+    "./manage.py",
+    "**/*migrations*/*",
+    "cam_archive/wsgi.py",
+    "cam_archive/asgi.py",
+    "cam_archive/settings.py",
+]
