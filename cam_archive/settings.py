@@ -122,6 +122,7 @@ INSTALLED_APPS = [
     'axes',
     'cam_archive',
     'video',
+    'camera',
     'django_filters',
     'django_otp',
     'django_otp.plugins.otp_static',

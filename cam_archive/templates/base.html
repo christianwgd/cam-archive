@@ -4,7 +4,7 @@
 {% block bootstrap5_extra_head %}
 {{ block.super }}
 <meta name="viewport" content="width=device-width"/>
-
+<link rel="stylesheet" type="text/css" href="{% static "css/cam-archive.css" %}" />
 {% endblock %}
 
 {% block bootstrap5_extra_script %}
@@ -16,7 +16,7 @@
 
 {% block bootstrap5_content %}
 <!-- Navigation -->
-<nav class="navbar navbar-expand-md navbar-light bg-light">
+<nav class="navbar fixed-top navbar-expand-md navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'img/camera.svg' %}" alt="" height="25">
@@ -75,9 +75,9 @@
 </nav>
 
 <!-- Content -->
-<div class="container-fluid">
+<div class="container-fluid mt-navbar">
 
-    <div class="row">
+    <div class="row mb-5">
         <div class="col-12">
         <h3 style="text-align: center;">{% block page_title %}(no content){% endblock %}</h3>
         {% bootstrap_messages %}

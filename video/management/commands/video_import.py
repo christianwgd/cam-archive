@@ -5,7 +5,8 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from video.models import Video, get_name_from_file_name, get_camera_from_file_name, get_timestamp_from_file_name, \
+from camera.models import Camera
+from video.models import Video, get_name_from_file_name, get_timestamp_from_file_name, \
     get_timestamp_from_string
 
 
@@ -15,6 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         Video.objects.all().delete()
+        camera = Camera.objects.get(name='Haustuer')
 
         # traverse root directory, and list directories as dirs and files as files
         home_dir = '/Users/christianwiegand/Desktop/2025/'
@@ -22,7 +24,7 @@ class Command(BaseCommand):
             for file_name in files:
                 video = Video(
                     name=get_name_from_file_name(file_name),
-                    camera=get_camera_from_file_name(file_name),
+                    camera=camera,
                     timestamp=get_timestamp_from_string(
                         get_timestamp_from_file_name(file_name)
                     ),

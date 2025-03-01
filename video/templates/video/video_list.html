@@ -24,7 +24,11 @@
             {% for video in day_group.list %}
                 <div class="col text-center">
                     <a href="{{ video.get_absolute_url }}">
-                        <img src="{% static 'img/video-movie.svg' %}" width="100" alt="">
+                        {% if video.thumbnail %}
+                            <img src="{{ video.thumbnail.url }}" width="100" alt="">
+                        {% else %}
+                            <img src="{% static 'img/video-movie.svg' %}" width="100" alt="">
+                        {% endif %}
                     </a>
                     <h6 class="card-title">{{ video.timestamp|date:"H:i:s" }}</h6>
                     <h6 class="card-text">{{ video.camera }}</h6>

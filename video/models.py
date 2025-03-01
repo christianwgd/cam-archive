@@ -1,11 +1,15 @@
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
+from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.timezone import make_aware
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
+
+from camera.models import Camera
 
 
 def get_name_from_file_name(file_name):
@@ -44,15 +48,40 @@ class Video(models.Model):
     name = models.CharField(
         verbose_name=_('name'), max_length=255
     )
-    camera = models.CharField(
-        verbose_name=_('camera'), max_length=255
+    camera = models.ForeignKey(
+        Camera, on_delete=models.CASCADE, verbose_name=_('camera')
     )
     file = models.FileField(
-        verbose_name=_('Video file'), upload_to='videos/'
+        verbose_name=_('video file'), upload_to='videos/'
+    )
+    thumbnail = models.FileField(
+        verbose_name=_('thumbnail'), upload_to='thumbs/', null=True, blank=True,
     )
     timestamp = models.DateTimeField(
         verbose_name=_('timestamp')
     )
+
+
+@receiver(models.signals.pre_save, sender=Video)
+def auto_create_thumbnail_on_save(sender, instance, **kwargs):
+    """
+    Creates thumbnail file for video file
+    and sets it to corresponding `Video` object.
+    """
+    if instance.file:
+        ffmpeg = getattr(settings, 'FFMPEG_BIN', 'ffmpeg')
+        thumb_name = f'thumbs/thumb-{get_name_from_file_name(instance.file.name)}.jpg'
+        thumb_path = Path(settings.MEDIA_ROOT) / thumb_name
+        subprocess.call([  # noqa: S603
+            ffmpeg,
+            '-y', '-i',
+            instance.file.path,
+            '-ss', '00:00:05',
+            '-vframes', '1',
+            thumb_path
+        ])
+        instance.thumbnail.name = str(thumb_name)
+
 
 
 @receiver(models.signals.post_delete, sender=Video)
@@ -63,3 +92,5 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     """
     if instance.file and Path(instance.file.path).is_file():
         Path.unlink(instance.file.path)
+    if instance.thumbnail and Path(instance.thumbnail.path).is_file():
+        Path.unlink(instance.thumbnail.path)
