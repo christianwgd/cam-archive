@@ -2,8 +2,7 @@
 
 <div align="center">
 
-[![Django CI run test](https://github.com/christianwgd/medic/actions/workflows/django-test.yml/badge.svg)](https://github.com/christianwgd/medic/actions/workflows/django-test.yml)
-[![codecov](https://codecov.io/gh/christianwgd/medic/branch/master/graph/badge.svg?token=O4MWGYV52K)](https://codecov.io/gh/christianwgd/medic)
+
 
 </div>
 
