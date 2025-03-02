@@ -62,8 +62,7 @@ class Video(models.Model):
     )
 
 
-@receiver(models.signals.pre_save, sender=Video)
-def auto_create_thumbnail_on_save(sender, instance, **kwargs):
+def create_thumbnail(instance):
     """
     Creates thumbnail file for video file
     and sets it to corresponding `Video` object.
@@ -81,7 +80,6 @@ def auto_create_thumbnail_on_save(sender, instance, **kwargs):
             thumb_path
         ])
         instance.thumbnail.name = str(thumb_name)
-
 
 
 @receiver(models.signals.post_delete, sender=Video)
