@@ -47,6 +47,13 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.13'
+    - name: Set up FFmpeg
+      uses: FedericoCarboni/setup-ffmpeg@v2
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Create folder
+      run: |
+        mkdir -p media/thumbs
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
