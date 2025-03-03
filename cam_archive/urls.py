@@ -12,6 +12,7 @@ admin.site.site_header = _('Cam Archive')
 urlpatterns = [
     path('', include(tf_urls)),
     path('admin/', admin.site.urls),
+    path('frontend_auth/', include('frontend_auth.urls')),
     path('video/', include('video.urls')),
     path('camera/', include('camera.urls')),
 

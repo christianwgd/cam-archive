@@ -1,5 +1,5 @@
 {% extends "two_factor/_base_focus.html" %}
-{% load i18n %}
+{% load i18n bootstrap_icons %}
 
 {% block page_title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}
 
@@ -13,9 +13,9 @@
         </p>
         {% if not phone_methods %}
             <p>
-                <a href="{% url 'startpage' %}" >
+                <a href="{% url 'home' %}" >
                     <button class="btn btn-primary" type="button">
-                        <i class="far fa-home"></i>
+                        {% bs_icon 'check-lg' %}
                     </button>
                 </a>
                 <a href="{% url 'two_factor:profile' %}" >

@@ -120,6 +120,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'axes',
+    'frontend_auth',
     'cam_archive',
     'video',
     'camera',
@@ -128,6 +129,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'two_factor',
+    'django_bootstrap_icons',
     'django_bootstrap5',
 ]
 

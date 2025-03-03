@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n django_bootstrap5 static %}
+
+{% block bootstrap5_extra_head %}
+{{ block.super }}
+<link href="{% static 'accounts/css/accounts.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block side_navigation %}{% endblock %}
+
+{% block page_title %}{% trans 'Login' %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-12 transparent-frame">
+        <div class="panel-white">
+            {% if user.is_authenticated %}
+            <p class="errornote">
+            {% blocktrans trimmed %}
+                You are authenticated as {{ user }}, but are not authorized to
+                access this page. Would you like to login to a different account?
+            {% endblocktrans %}
+            </p>
+            {% endif %}
+            <form role="form" action="{{ app_path }}" method="post" id="login-form" novalidate>
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-primary">
+                    {% trans 'Log in' %}
+                </button>
+                <a class="button secondaryAction float-end" href="{% url 'frontend_auth:password_reset' %}">
+                    {% trans "Forgot password" %}?
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
