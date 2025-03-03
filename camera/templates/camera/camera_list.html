@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static i18n django_bootstrap5 %}
+
+{% block page_title %}{% endblock %}
+
+{% block content %}
+{% for camera in camera_list %}
+    <ul>
+        <li>{{ camera }} {{ camera.manufacturer }} {{ camera.model }}</li>
+    </ul>
+{% endfor %}
+{% endblock %}

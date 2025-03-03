@@ -1,3 +1,8 @@
+from datetime import datetime
+from io import BytesIO
+from pathlib import Path
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.utils.dateformat import format
 from django.urls import reverse
@@ -5,7 +10,7 @@ from django.utils.timezone import make_aware
 
 from camera.models import Camera
 from video.models import Video, get_name_from_file_name, get_camera_from_file_name, get_timestamp_from_file_name, \
-    get_timestamp_from_string
+    get_timestamp_from_string, create_thumbnail
 from faker import Faker
 
 
@@ -14,25 +19,35 @@ class TestVideoModel(TestCase):
     def setUp(self):
         self.fake = Faker('de_DE')
         self.timestamp = make_aware(
-            self.fake.date_time_this_year(
-                before_now=True, after_now=False
-            ).replace(microsecond=0)
+            datetime(2025, 2, 3, 19, 38, 8)
         )
         self.camera = Camera.objects.create(
-            name=self.fake.word(),
+            name='Test',
             manufacturer=self.fake.word(),
             model=self.fake.word(),
         )
-        self.name = f'{self.camera}_{self.timestamp.strftime("%Y%m%d%H%M%S")}'
-        self.file_name = f'{self.name}.mp4'
+        self.name = f'{self.camera.name}__00_20250203193808.mp4'
+        self.file_name = f'test_files/{self.camera.name}_00_20250203193808.mp4'
+        self.video_file_name = self.file_name
+        bytes = open(self.video_file_name, 'rb').read()
+        self.video_file_content = BytesIO(bytes)
+        self.video_file = SimpleUploadedFile(
+            self.video_file_name,
+            self.video_file_content.read(),
+            content_type='video/mp4',
+        )
         self.video = Video.objects.create(
-            name=self.name,
+            name='Test_00_20250203193808',
             camera=self.camera,
             timestamp=self.timestamp,
-            file=f'videos/{self.file_name}',
-            thumbnail=self.fake.url(),
+            file=self.video_file,
+            thumbnail=None,
         )
         self.timestamp_as_string = format(self.video.timestamp, 'YmdHis')
+
+    def tearDown(self):
+        if self.video.id:
+            self.video.delete()
 
     def test_string_representation(self):
         self.assertEqual(str(self.video), self.video.name)
@@ -66,3 +81,14 @@ class TestVideoModel(TestCase):
             self.timestamp,
             get_timestamp_from_string(self.timestamp_as_string)
         )
+
+    def test_auto_delete_file_on_delete(self):
+        self.assertTrue(self.video.file and Path(self.video.file.path).is_file())
+        self.video.delete()
+        self.assertFalse(self.video.file and Path(self.video.file.path).is_file())
+
+    def test_create_thumbnail(self):
+        self.assertFalse(self.video.thumbnail)
+        create_thumbnail(self.video)
+        self.assertTrue(self.video.thumbnail)
+        self.assertTrue(Path(self.video.thumbnail.path).is_file())

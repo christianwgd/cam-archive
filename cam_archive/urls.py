@@ -13,10 +13,11 @@ urlpatterns = [
     path('', include(tf_urls)),
     path('admin/', admin.site.urls),
     path('video/', include('video.urls')),
+    path('camera/', include('camera.urls')),
 
     # Startseite
     path('', RedirectView.as_view(url="video/list/"), name='home'),
 ]
-if settings.DEBUG:
+if settings.DEBUG:  # pragma: no cover
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

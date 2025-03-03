@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static i18n django_bootstrap5 %}
+
+{% block page_title %}{{ video.timestamp }}{% endblock %}
+
+{% block content %}
+    {{ camera.name }}
+
+    { camera.manufacturer }} {{ camera.model }}
+{% endblock %}
