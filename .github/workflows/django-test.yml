@@ -32,6 +32,9 @@ jobs:
         python manage.py migrate
     - name: Run Ruff
       run: ruff check --output-format=github .
+    - name: Create folder
+      run: |
+        mkdir -p media/thumbs
     - name: Run Tests
       run: pytest
 
