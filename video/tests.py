@@ -1,9 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import BytesIO
 from pathlib import Path
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
+from django.utils import timezone
 from django.utils.dateformat import format
 from django.urls import reverse
 from django.utils.timezone import make_aware
@@ -44,10 +45,18 @@ class TestVideoModel(TestCase):
             thumbnail=None,
         )
         self.timestamp_as_string = format(self.video.timestamp, 'YmdHis')
+        for i in range(1, 3):
+            timestamp = timezone.now() + timedelta(hours=i)
+            Video.objects.create(
+                name=f'Test_00_{timestamp}',
+                camera=self.camera,
+                timestamp=timestamp,
+                file=self.video_file,
+                thumbnail=None,
+            )
 
     def tearDown(self):
-        if self.video.id:
-            self.video.delete()
+        Video.objects.all().delete()
 
     def test_string_representation(self):
         self.assertEqual(str(self.video), self.video.name)
@@ -92,3 +101,15 @@ class TestVideoModel(TestCase):
         create_thumbnail(self.video)
         self.assertTrue(self.video.thumbnail)
         self.assertTrue(Path(self.video.thumbnail.path).is_file())
+
+    def test_get_previous_by_timestamp(self):
+        video = Video.objects.order_by('-timestamp').first()
+        prev_video = video.get_previous_by_timestamp()
+        self.assertIsInstance(prev_video, Video)
+        self.assertTrue(prev_video.timestamp < video.timestamp)
+
+    def test_get_next_by_timestamp(self):
+        video = Video.objects.order_by('timestamp').first()
+        next_video = video.get_next_by_timestamp()
+        self.assertIsInstance(next_video, Video)
+        self.assertTrue(next_video.timestamp > video.timestamp)
