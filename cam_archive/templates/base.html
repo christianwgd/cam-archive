@@ -12,8 +12,8 @@
 {{ block.super }}
 {% endblock %}
 
-{% block bootstrap5_title %}Camera Archive{% endblock %}
-{% block title %}Camera Archive{% endblock %}
+{% block bootstrap5_title %}{% trans 'Camera Archive' %}{% endblock %}
+{% block title %}{% trans 'Camera Archive' %}{% endblock %}
 
 {% block bootstrap5_content %}
 <!-- Navigation -->
@@ -21,7 +21,7 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'img/camera.svg' %}" alt="" height="25">
-            Camera Archive
+            {% trans 'Camera Archive' %}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-expanded="false">
             <span class="navbar-toggler-icon"></span>
@@ -50,10 +50,13 @@
                         {% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="{% url 'frontend_auth:logout' %}">
-                            {% bs_icon 'box-arrow-in-right' %}
-                            {% trans 'Log out' %}
-                        </a>
+                        <form class="success" id="logout-form" action="{% url 'frontend_auth:logout' %}" method="post">
+                            {% csrf_token %}
+                            <button class="dropdown-item btn-link" type="submit">
+                                {% bs_icon 'box-arrow-in-right' %}
+                                {% trans 'Log out' %}
+                            </button>
+                        </form>
                         <a class="dropdown-item" href="{% url 'frontend_auth:password_change' %}">
                             {% bs_icon 'key' %}
                             {% trans 'Password change' %}
