@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'  # noqa: S1
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': Path(BASE_DIR) / 'cam_arvhive.db',  # Or path to database file if using sqlite3.
+        'NAME': Path(BASE_DIR) / 'cam_archive.db',  # Or path to database file if using sqlite3.
     },
 }
 
