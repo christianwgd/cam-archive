@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-03 19:56+0100\n"
+"POT-Creation-Date: 2025-03-04 21:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: admin.py:15
+msgid "Generate thumbnail for video"
+msgstr "Erzeuge Vorschaubild für Video"
+
+#: admin.py:20
+#, python-format
+msgid "Successfully generated thumbnail for \"%s\""
+msgstr "Vorschaubild für \"%s\" erfolgreich erzeugt"
+
 #: apps.py:8 models.py:38
 msgid "Video"
 msgstr ""
