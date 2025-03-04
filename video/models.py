@@ -68,14 +68,28 @@ def create_thumbnail(instance):
     and sets it to corresponding `Video` object.
     """
     if instance.file:
-        ffmpeg = getattr(settings, 'FFMPEG_BIN', 'ffmpeg')
+        ffmpeg_path = settings.FFMPEG_BIN
+        ffmpeg = Path(ffmpeg_path) / 'ffmpeg'
+        ffprobe = Path(ffmpeg_path) / 'ffprobe'
         thumb_name = f'thumbs/thumb-{get_name_from_file_name(instance.file.name)}.jpg'
         thumb_path = Path(settings.MEDIA_ROOT) / thumb_name
+        result = subprocess.check_output([  # noqa: S603
+            ffprobe,
+            "-v",  "error", "-select_streams", "v:0",
+            "-show_entries", "stream=duration", "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            instance.file.path
+        ])
+        duration = int(result.decode().split('.')[0])
+        if duration > 5:
+            sec = 5
+        else:
+            sec = duration
         subprocess.call([  # noqa: S603
             ffmpeg,
             '-y', '-i',
             instance.file.path,
-            '-ss', '00:00:03',
+            '-ss', f'00:00:0{sec}',
             '-vframes', '1',
             thumb_path
         ])
