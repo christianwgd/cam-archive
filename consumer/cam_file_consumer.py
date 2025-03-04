@@ -1,14 +1,14 @@
 import logging
 import asyncio
 import subprocess
-from config import directory_to_watch, target_directory, python_executable
+from config import directory_to_watch, target_directory, python_executable, log_file
 from pathlib import Path
 
 from watchgod import awatch, Change
 
 
 logger = logging.getLogger('cam-archive')
-logging.basicConfig(filename='../log/cam_consumer.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename=log_file, encoding='utf-8', level=logging.DEBUG)
 
 
 # macos service definition: ~/Library/LaunchAgents/com.wgdnet.upload.agent.plist
