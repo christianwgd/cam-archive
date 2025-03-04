@@ -75,7 +75,7 @@ def create_thumbnail(instance):
             ffmpeg,
             '-y', '-i',
             instance.file.path,
-            '-ss', '00:00:05',
+            '-ss', '00:00:03',
             '-vframes', '1',
             thumb_path
         ])
