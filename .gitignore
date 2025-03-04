@@ -2,6 +2,7 @@
 media/
 __pycache__/
 localsettings.py
+consumer/config.py
 .vscode
 *.pyc
 log/
