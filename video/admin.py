@@ -17,4 +17,4 @@ class VideoAdmin(admin.ModelAdmin):
         for obj in queryset:
             create_thumbnail(obj)
             obj.save()
-            messages.success(request, _('Successfully generated thumbnail for "%s"' % obj))
+            messages.success(request, _('Successfully generated thumbnail for %s"') % obj)
