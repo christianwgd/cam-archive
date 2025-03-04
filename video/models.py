@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -68,9 +69,13 @@ def create_thumbnail(instance):
     and sets it to corresponding `Video` object.
     """
     if instance.file:
-        ffmpeg_path = getattr(settings, 'FFMPEG_BIN', '/usr/bin/')
-        ffmpeg = Path(ffmpeg_path) / 'ffmpeg'
-        ffprobe = Path(ffmpeg_path) / 'ffprobe'
+        ffmpeg_path = getattr(settings, 'FFMPEG_BIN', None)
+        if not ffmpeg_path:
+            ffmpeg = shutil.which('ffmpeg')
+            ffprobe = shutil.which('ffprobe')
+        else:
+            ffmpeg = Path(ffmpeg_path) / 'ffmpeg'
+            ffprobe = Path(ffmpeg_path) / 'ffprobe'
         thumb_name = f'thumbs/thumb-{get_name_from_file_name(instance.file.name)}.jpg'
         thumb_path = Path(settings.MEDIA_ROOT) / thumb_name
         result = subprocess.check_output([  # noqa: S603
