@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import shutil
 import subprocess
 from config import directory_to_watch, target_directory, python_executable, log_file
 from pathlib import Path
@@ -21,7 +22,7 @@ async def main():
                 filename = Path(str(change[1])).name
                 source_file = Path(directory_to_watch) / filename
                 target_file = Path(target_directory) / filename
-                Path(source_file).rename(target_file)
+                shutil.move(str(source_file), str(target_file))
                 process = subprocess.run(  # noqa S603
                     [python_executable, "manage.py", "video_consume", Path(filename).name],
                     stdout=subprocess.PIPE,
