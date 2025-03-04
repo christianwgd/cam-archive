@@ -1,4 +1,5 @@
 import mimetypes
+from logging import getLogger
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
@@ -6,6 +7,9 @@ from django.core.management.base import BaseCommand, CommandError
 from camera.models import Camera
 from video.models import Video, get_name_from_file_name, get_timestamp_from_file_name, \
     get_timestamp_from_string, create_thumbnail, get_camera_from_file_name
+
+
+logger = getLogger('cam_archive')
 
 
 class Command(BaseCommand):
@@ -17,19 +21,30 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if not options['file_name']:
             error_msg = "No file name provided"
+            logger.error(error_msg)
             raise CommandError(error_msg)
 
+        msg = f"Processing {options['file_name']}"
+        logger.info(msg)
+        self.style.SUCCESS(msg)
+
         file_name = options['file_name']
-        self.style.SUCCESS('Video file found "%s"' % file_name)
+        msg ='Video file found "%s"' % file_name
+        logger.info(msg)
+        self.style.SUCCESS(msg)
 
         camera, created = Camera.objects.get_or_create(name=get_camera_from_file_name(file_name))
         if created:
-            self.style.SUCCESS('Camera created "%s"' % camera)
+            msg = 'Camera created "%s"' % camera
         else:
-            self.style.SUCCESS('Camera used "%s"' % camera)
+            msg = 'Camera found "%s"' % camera
+        logger.info(msg)
+        self.style.SUCCESS(msg)
 
         if mimetypes.guess_type(file_name)[0] not in ['video/mp4']:
-            self.style.ERROR('File is not a videw file "%s"' % file_name)
+            msg = 'Video file "%s"' % file_name
+            logger.error(msg)
+            self.style.ERROR(msg)
 
         video = Video(
             name=get_name_from_file_name(file_name),
