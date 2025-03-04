@@ -68,7 +68,7 @@ def create_thumbnail(instance):
     and sets it to corresponding `Video` object.
     """
     if instance.file:
-        ffmpeg_path = settings.FFMPEG_BIN
+        ffmpeg_path = getattr(settings, 'FFMPEG_BIN', '/usr/bin/')
         ffmpeg = Path(ffmpeg_path) / 'ffmpeg'
         ffprobe = Path(ffmpeg_path) / 'ffprobe'
         thumb_name = f'thumbs/thumb-{get_name_from_file_name(instance.file.name)}.jpg'
