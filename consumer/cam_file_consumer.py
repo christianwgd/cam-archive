@@ -24,8 +24,9 @@ async def main():
                 target_file = Path(target_directory) / filename
                 try:
                     new_file = shutil.move(str(source_file), str(target_file))
-                    logger.info(f"Moved {filename} to {new_file}")
-                except Exception as e:  # noqa S110
+                    msg = f"Moved {filename} to {new_file}"
+                    logger.info(msg)
+                except Exception as e:
                     logger.exception(e)
                 process = subprocess.run(  # noqa S603
                     [python_executable, manage, "video_consume", Path(filename).name],
