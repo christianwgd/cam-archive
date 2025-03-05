@@ -129,6 +129,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'two_factor',
+    'dark_mode_switch',
     'django_bootstrap_icons',
     'django_bootstrap5',
 ]

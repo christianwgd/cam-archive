@@ -6,10 +6,12 @@
 <meta name="viewport" content="width=device-width"/>
 <link rel="stylesheet" href="{% static 'bootstrap_icons/css/bootstrap_icons.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static "css/cam-archive.css" %}" />
+<link href="{% static 'dark_mode_switch/dark-mode-switch.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block bootstrap5_extra_script %}
 {{ block.super }}
+<script src="{% static 'dark_mode_switch/dark-mode-switch.js' %}"></script>
 {% endblock %}
 
 {% block bootstrap5_title %}{% trans 'Camera Archive' %}{% endblock %}
@@ -17,7 +19,7 @@
 
 {% block bootstrap5_content %}
 <!-- Navigation -->
-<nav class="navbar fixed-top navbar-expand-md navbar-light bg-light">
+<nav class="navbar fixed-top navbar-expand-md">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'img/camera.svg' %}" alt="" height="25">
@@ -44,6 +46,7 @@
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
+                {% include 'dark_mode_switch/dark_mode_switch.html' %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" href="">
                         {% bs_icon 'person-fill' %}
