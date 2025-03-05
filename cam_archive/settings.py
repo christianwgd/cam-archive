@@ -150,6 +150,9 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
+# disable axes if debug True
+AXES_ENABLED = not DEBUG
+
 ##################
 # LOCAL SETTINGS #
 ##################
