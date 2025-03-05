@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-04 22:03+0100\n"
+"POT-Creation-Date: 2025-03-05 14:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,33 +23,50 @@ msgid "Generate thumbnail for video"
 msgstr "Erzeuge Vorschaubild für Video"
 
 #: admin.py:20
+#, python-format
 msgid "Successfully generated thumbnail for %s\""
 msgstr "Vorschaubild für \"%s\" erfolgreich erzeugt"
 
-#: apps.py:8 models.py:38
+#: admin.py:22
+msgid "Set video duration"
+msgstr "Laufzeit des Videos setzen"
+
+#: admin.py:28
+msgid "Successfully set duration for %s\""
+msgstr "Laufzeit für \"%s\" erfolgreich erzeugt"
+
+#: apps.py:8 models.py:39
 msgid "Video"
 msgstr ""
 
-#: models.py:39
+#: models.py:40
 msgid "Videos"
 msgstr ""
 
-#: models.py:49
+#: models.py:50
 msgid "name"
 msgstr "Name"
 
-#: models.py:52
+#: models.py:53
 msgid "camera"
 msgstr "Kamera"
 
-#: models.py:55
+#: models.py:56
 msgid "video file"
 msgstr "Video-Datei"
 
-#: models.py:58
+#: models.py:59
 msgid "thumbnail"
 msgstr "Vorschaubild"
 
-#: models.py:61
+#: models.py:62
 msgid "timestamp"
 msgstr "Zeitstempel"
+
+#: models.py:65
+msgid "duration"
+msgstr "Laufzeit"
+
+#: models.py:66
+msgid "Duration of the video in seconds"
+msgstr "Laufzeit des Videos in Sekunden"

@@ -11,7 +11,7 @@ from django.utils.timezone import make_aware
 
 from camera.models import Camera
 from video.models import Video, get_name_from_file_name, get_camera_from_file_name, get_timestamp_from_file_name, \
-    get_timestamp_from_string, create_thumbnail
+    get_timestamp_from_string, create_thumbnail, get_duration
 from faker import Faker
 
 
@@ -101,6 +101,13 @@ class TestVideoModel(TestCase):
         create_thumbnail(self.video)
         self.assertTrue(self.video.thumbnail)
         self.assertTrue(Path(self.video.thumbnail.path).is_file())
+
+    def test_get_duration(self):
+        self.assertEqual(0, self.video.duration)
+        self.video.duration = get_duration(self.video)
+        self.video.save()
+        self.assertIsInstance(self.video.duration, int)
+        self.assertTrue(self.video.duration > 0)
 
     def test_get_previous_by_timestamp(self):
         video = Video.objects.order_by('-timestamp').first()

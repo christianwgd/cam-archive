@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 
 from camera.models import Camera
 from video.models import Video, get_name_from_file_name, get_timestamp_from_file_name, \
-    get_timestamp_from_string, create_thumbnail
+    get_timestamp_from_string, create_thumbnail, get_duration
 
 
 class Command(BaseCommand):
@@ -38,4 +38,5 @@ class Command(BaseCommand):
                 shutil.copy(full_path, media_path)
                 video.file.name = str(video_path)
                 create_thumbnail(video)
+                video.duration = get_duration(video)
                 video.save()

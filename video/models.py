@@ -61,6 +61,28 @@ class Video(models.Model):
     timestamp = models.DateTimeField(
         verbose_name=_('timestamp')
     )
+    duration = models.SmallIntegerField(
+        verbose_name=_('duration'), default=0, null=True, blank=True,
+        help_text=_('Duration of the video in seconds')
+    )
+
+
+def get_duration(instance):
+    if instance.file:
+        ffmpeg_path = getattr(settings, 'FFMPEG_BIN', None)
+        if not ffmpeg_path:
+            ffprobe = shutil.which('ffprobe')
+        else:
+            ffprobe = Path(ffmpeg_path) / 'ffprobe'
+        result = subprocess.check_output([  # noqa: S603
+            ffprobe,
+            "-v",  "error", "-select_streams", "v:0",
+            "-show_entries", "stream=duration", "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            instance.file.path
+        ])
+        return int(result.decode().split('.')[0])
+    return 0
 
 
 def create_thumbnail(instance):
@@ -72,24 +94,17 @@ def create_thumbnail(instance):
         ffmpeg_path = getattr(settings, 'FFMPEG_BIN', None)
         if not ffmpeg_path:
             ffmpeg = shutil.which('ffmpeg')
-            ffprobe = shutil.which('ffprobe')
         else:
             ffmpeg = Path(ffmpeg_path) / 'ffmpeg'
-            ffprobe = Path(ffmpeg_path) / 'ffprobe'
         thumb_name = f'thumbs/thumb-{get_name_from_file_name(instance.file.name)}.jpg'
         thumb_path = Path(settings.MEDIA_ROOT) / thumb_name
-        result = subprocess.check_output([  # noqa: S603
-            ffprobe,
-            "-v",  "error", "-select_streams", "v:0",
-            "-show_entries", "stream=duration", "-of",
-            "default=noprint_wrappers=1:nokey=1",
-            instance.file.path
-        ])
-        duration = int(result.decode().split('.')[0])
-        if duration > 5:
-            sec = 5
+        if instance.duration:
+            if instance.duration > 5:
+                sec = 5
+            else:
+                sec = instance.duration
         else:
-            sec = duration
+            sec = 3
         subprocess.call([  # noqa: S603
             ffmpeg,
             '-y', '-i',

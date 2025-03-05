@@ -8,6 +8,25 @@
        preload="" controls src="{{ video.file.url }}" type="video/mp4">
 </video>
 
+<div class="row mt-1">
+    <div class="col-md-4 col-sm-12 text-md-start text-center">
+        <h6>{% trans 'duration' %}: {{ video.duration }} sec.</h6>
+    </div>
+    <div class="col-md-4 col-sm-12 text-center">
+        <h6>
+            {% trans 'camera' %}: {{ video.camera }}
+            {% if video.camera.manufacturer and video.camera.model %}
+            (
+                {{ video.camera.manufacturer }}
+                {{ video.camera.model }}
+            )
+            {% endif %}
+        </h6>
+    </div>
+    <div class="col-md-4 col-sm-12 text-md-end text-sm-center text-center">
+        <h6>{{ video.name }}</h6>
+    </div>
+</div>
 <div class="row mt-2">
     <div class="col">
         {% with video.get_previous_by_timestamp as previous %}

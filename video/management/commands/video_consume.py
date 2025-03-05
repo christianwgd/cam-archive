@@ -6,8 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 from camera.models import Camera
 from video.models import Video, get_name_from_file_name, get_timestamp_from_file_name, \
-    get_timestamp_from_string, create_thumbnail, get_camera_from_file_name
-
+    get_timestamp_from_string, create_thumbnail, get_camera_from_file_name, get_duration
 
 logger = getLogger('cam_archive')
 
@@ -56,4 +55,5 @@ class Command(BaseCommand):
         video_path = Path('videos') / file_name
         video.file.name = str(video_path)
         create_thumbnail(video)
+        video.duration = get_duration(video)
         video.save()
