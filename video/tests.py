@@ -139,7 +139,27 @@ class VideoAdminActionTests(TestVideoModel):
         self.request._messages = FallbackStorage(self.request)
         self.video_admin = VideoAdmin(Video, AdminSite())
 
-    def test_action_generate_thumbnail(self):
+    def test_action_generate_thumbnail_duration_none(self):
+        self.assertTrue(self.video.thumbnail.name is None)
+        queryset = Video.objects.filter(pk=self.video.pk)
+        self.video_admin.generate_thumbnail(self.request, queryset)
+        self.assertTrue(queryset.exists())
+        self.video.refresh_from_db()
+        self.assertFalse(self.video.thumbnail.name is None)
+
+    def test_action_generate_thumbnail_duration_gt_5(self):
+        self.video.duration = 6
+        self.video.save()
+        self.assertTrue(self.video.thumbnail.name is None)
+        queryset = Video.objects.filter(pk=self.video.pk)
+        self.video_admin.generate_thumbnail(self.request, queryset)
+        self.assertTrue(queryset.exists())
+        self.video.refresh_from_db()
+        self.assertFalse(self.video.thumbnail.name is None)
+
+    def test_action_generate_thumbnail_duration_lt_5(self):
+        self.video.duration = 4
+        self.video.save()
         self.assertTrue(self.video.thumbnail.name is None)
         queryset = Video.objects.filter(pk=self.video.pk)
         self.video_admin.generate_thumbnail(self.request, queryset)
@@ -154,3 +174,13 @@ class VideoAdminActionTests(TestVideoModel):
         self.assertTrue(queryset.exists())
         self.video.refresh_from_db()
         self.assertFalse(self.video.duration == 0)
+
+    def test_action_set_duration_no_video(self):
+        self.video.file = None
+        self.video.save()
+        self.assertTrue(self.video.duration == 0)
+        queryset = Video.objects.filter(pk=self.video.pk)
+        self.video_admin.set_duration(self.request, queryset)
+        self.assertTrue(queryset.exists())
+        self.video.refresh_from_db()
+        self.assertTrue(self.video.duration == 0)
