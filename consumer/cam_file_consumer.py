@@ -25,7 +25,7 @@ async def main():
                 source_file = Path(directory_to_watch) / filename
                 target_file = Path(target_directory) / filename
                 # Give the file some time to be written completely
-                time.sleep(2)
+                time.sleep(5)
                 try:
                     new_file = shutil.move(str(source_file), str(target_file))
                     msg = f"Moved {filename} to {new_file}"
