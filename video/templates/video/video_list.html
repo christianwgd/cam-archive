@@ -17,7 +17,8 @@
         <div class="accordion-item">
             <h3 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ day_group.grouper|slugify }}" aria-expanded="true" aria-controls="collapse-{{ day_group.grouper|slugify }}">
-                    {{ day_group.grouper }}
+                    {{ day_group.grouper }}&nbsp;
+                    <span class="badge rounded-pill text-bg-secondary">{{ day_group.list|length }}</span>
                 </button>
             </h3>
             <div id="collapse-{{ day_group.grouper|slugify }}" class="accordion-collapse collapse" data-bs-parent="#accordion-{{ month_group.grouper|slugify }}">
