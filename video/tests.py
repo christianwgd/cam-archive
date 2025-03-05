@@ -2,17 +2,24 @@ from datetime import datetime, timedelta
 from io import BytesIO
 from pathlib import Path
 
+from django.contrib import auth
+from django.contrib.admin import AdminSite
+from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.utils import timezone
 from django.utils.dateformat import format
 from django.urls import reverse
 from django.utils.timezone import make_aware
 
 from camera.models import Camera
+from video.admin import VideoAdmin
 from video.models import Video, get_name_from_file_name, get_camera_from_file_name, get_timestamp_from_file_name, \
     get_timestamp_from_string, create_thumbnail, get_duration
 from faker import Faker
+
+
+User = auth.get_user_model()
 
 
 class TestVideoModel(TestCase):
@@ -120,3 +127,30 @@ class TestVideoModel(TestCase):
         next_video = video.get_next_by_timestamp()
         self.assertIsInstance(next_video, Video)
         self.assertTrue(next_video.timestamp > video.timestamp)
+
+
+class VideoAdminActionTests(TestVideoModel):
+
+    def setUp(self):
+        super().setUp()
+        self.factory = RequestFactory()
+        self.request = self.factory.get('/')
+        self.request.session = 'session'
+        self.request._messages = FallbackStorage(self.request)
+        self.video_admin = VideoAdmin(Video, AdminSite())
+
+    def test_action_generate_thumbnail(self):
+        self.assertTrue(self.video.thumbnail.name is None)
+        queryset = Video.objects.filter(pk=self.video.pk)
+        self.video_admin.generate_thumbnail(self.request, queryset)
+        self.assertTrue(queryset.exists())
+        self.video.refresh_from_db()
+        self.assertFalse(self.video.thumbnail.name is None)
+
+    def test_action_set_duration(self):
+        self.assertTrue(self.video.duration == 0)
+        queryset = Video.objects.filter(pk=self.video.pk)
+        self.video_admin.set_duration(self.request, queryset)
+        self.assertTrue(queryset.exists())
+        self.video.refresh_from_db()
+        self.assertFalse(self.video.duration == 0)
