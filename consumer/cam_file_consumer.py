@@ -2,6 +2,7 @@ import asyncio
 import logging
 import shutil
 import subprocess
+from time import sleep
 
 from config import directory_to_watch, target_directory, python_executable, log_file, manage
 from pathlib import Path
@@ -20,6 +21,7 @@ async def main():
     async for changes in awatch(directory_to_watch):
         for change in changes:
             if change[0] == Change.added:
+                sleep(5)  #
                 filename = Path(str(change[1])).name
                 source_file = Path(directory_to_watch) / filename
                 target_file = Path(target_directory) / filename
