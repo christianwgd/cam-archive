@@ -31,7 +31,7 @@ async def main():
                 logger.info(msg)
                 msg = '{file} copied.'.format(file=Path(filename).name)
                 logger.info(msg)
-                await asyncio.sleep(2)
+                await asyncio.sleep(5)
                 Path(source_file).unlink()
                 msg = f"Deleted {source_file}"
                 logger.info(msg)
