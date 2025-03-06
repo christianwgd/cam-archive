@@ -2,7 +2,7 @@ import mimetypes
 from logging import getLogger
 from pathlib import Path
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from camera.models import Camera
 from video.models import Video, get_name_from_file_name, get_timestamp_from_file_name, \
@@ -18,11 +18,6 @@ class Command(BaseCommand):
         parser.add_argument("file_name", type=str)
 
     def handle(self, *args, **options):
-        if not options['file_name']:
-            error_msg = "No file name provided"
-            logger.error(error_msg)
-            raise CommandError(error_msg)
-
         msg = f"Processing {options['file_name']}"
         logger.info(msg)
         self.style.SUCCESS(msg)

@@ -20,9 +20,9 @@ class Camera(models.Model):
         verbose_name=_('name'), max_length=255
     )
     manufacturer = models.CharField(
-        verbose_name=_('manufacturer'), max_length=255
+        verbose_name=_('manufacturer'), max_length=255, null=True, blank=True,
     )
     model = models.CharField(
-        verbose_name=_('model'), max_length=255
+        verbose_name=_('model'), max_length=255, null=True, blank=True,
     )
 

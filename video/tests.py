@@ -1,11 +1,14 @@
+import shutil
 from datetime import datetime, timedelta
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 
+import pytest
 from django.contrib import auth
 from django.contrib.admin import AdminSite
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command, CommandError
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
 from django.utils.dateformat import format
@@ -184,3 +187,114 @@ class VideoAdminActionTests(TestVideoModel):
         self.assertTrue(queryset.exists())
         self.video.refresh_from_db()
         self.assertTrue(self.video.duration == 0)
+
+
+class CommandsTestCase(TestCase):
+
+    def tearDown(self):
+        Video.objects.all().delete()
+
+    def call_command(self, command, *args, **kwargs):
+        out = StringIO()
+        call_command(
+            command,
+            *args,
+            stdout=out,
+            stderr=StringIO(),
+            **kwargs,
+        )
+        return out.getvalue()
+
+    def test_video_import(self):
+        self.call_command(
+            "video_import",
+            "test_files/",
+        )
+        videos = Video.objects.all()
+        self.assertEqual(videos.count(), 1)
+        video = videos.first()
+        self.assertEqual(video.file.name, "videos/Test_00_20250203193808.mp4")
+        self.assertEqual(video.camera, Camera.objects.get(name='Test'))
+
+    def test_video_consume(self):
+        shutil.copy(
+            'test_files/Test_00_20250203193808.mp4',
+            'media/videos/Test_00_20250203193808.mp4'
+        )
+        self.call_command(
+            "video_consume",
+            "Test_00_20250203193808.mp4",
+        )
+        videos = Video.objects.all()
+        self.assertEqual(videos.count(), 1)
+        video = videos.filter(name='Test_00_20250203193808').first()
+        self.assertEqual(video.file.name, "videos/Test_00_20250203193808.mp4")
+        self.assertEqual(video.camera, Camera.objects.get(name='Test'))
+
+    def test_video_consume_no_file(self):
+        with pytest.raises(CommandError):
+            self.call_command("video_consume")
+
+    def test_video_delete_no_stale(self):
+        self.fake = Faker('de_DE')
+        self.timestamp = make_aware(
+            datetime(2025, 2, 3, 19, 38, 8)
+        )
+        self.camera = Camera.objects.create(
+            name='Test',
+            manufacturer=self.fake.word(),
+            model=self.fake.word(),
+        )
+        self.name = f'{self.camera.name}__00_20250203193808.mp4'
+        self.file_name = f'test_files/{self.camera.name}_00_20250203193808.mp4'
+        self.video_file_name = self.file_name
+        bytes = open(self.video_file_name, 'rb').read()
+        self.video_file_content = BytesIO(bytes)
+        self.video_file = SimpleUploadedFile(
+            self.video_file_name,
+            self.video_file_content.read(),
+            content_type='video/mp4',
+        )
+        self.timestamp_as_string = format(self.timestamp, 'YmdHis')
+        for i in range(1, 3):
+            timestamp = timezone.now() + timedelta(hours=i)
+            Video.objects.create(
+                name=f'Test_00_{timestamp}',
+                camera=self.camera,
+                timestamp=timestamp,
+                file=self.video_file,
+                thumbnail=None,
+            )
+        out = self.call_command("video_delete")
+        self.assertIn("Deleted 0 videos", out)
+
+    def test_video_delete(self):
+        self.fake = Faker('de_DE')
+        self.timestamp = timezone.now() - timedelta(days=15)
+        self.camera = Camera.objects.create(
+            name='Test',
+            manufacturer=self.fake.word(),
+            model=self.fake.word(),
+        )
+        self.name = f'{self.camera.name}__00_20250203193808.mp4'
+        self.file_name = f'test_files/{self.camera.name}_00_20250203193808.mp4'
+        self.video_file_name = self.file_name
+        bytes = open(self.video_file_name, 'rb').read()
+        self.video_file_content = BytesIO(bytes)
+        self.video_file = SimpleUploadedFile(
+            self.video_file_name,
+            self.video_file_content.read(),
+            content_type='video/mp4',
+        )
+        self.timestamp_as_string = format(self.timestamp, 'YmdHis')
+        for i in range(3):
+            timestamp = self.timestamp - timedelta(hours=i)
+            Video.objects.create(
+                name=f'Test_00_{timestamp}',
+                camera=self.camera,
+                timestamp=timestamp,
+                file=self.video_file,
+                thumbnail=None,
+            )
+        out = self.call_command("video_delete")
+        self.assertIn("Deleted 3 videos", out)
