@@ -7,7 +7,7 @@ from video.models import Video, create_thumbnail, get_duration
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
 
-    list_display = ['name', 'file', 'timestamp']
+    list_display = ['name', 'timestamp', 'duration']
     date_hierarchy = 'timestamp'
     search_fields = ['name']
     actions = ['generate_thumbnail', 'set_duration']
