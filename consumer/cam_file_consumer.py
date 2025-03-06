@@ -32,13 +32,15 @@ async def main():
                     logger.info(msg)
                 except Exception as e:
                     logger.exception(e)
+                msg = '{file} copied.'.format(file=Path(filename).name)
+                logger.info(msg)
                 time.sleep(2)
                 process = subprocess.run(  # noqa S603
                     [python_executable, manage, "video_consume", Path(filename).name],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE, check=False
                 )
-                msg = '{file} hochgeladen.'.format(file=Path(filename).name)
+                msg = '{file} uploaded.'.format(file=Path(filename).name)
                 logger.info(msg)
                 msg = str(process.stderr)
                 logger.error(msg)
