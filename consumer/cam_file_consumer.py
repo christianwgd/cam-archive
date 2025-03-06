@@ -27,14 +27,17 @@ async def main():
                 await asyncio.sleep(2)
 
                 try:
-                    new_file = shutil.move(str(source_file), str(target_file))
-                    msg = f"Moved {filename} to {new_file}"
+                    shutil.copy2(source_file, target_file)
+                    msg = f"Copied {source_file} to {target_file}"
                     logger.info(msg)
                 except Exception as e:
                     logger.exception(e)
                 msg = '{file} copied.'.format(file=Path(filename).name)
                 logger.info(msg)
                 await asyncio.sleep(2)
+                Path(source_file).unlink()
+                msg = f"Deleted {source_file}"
+                logger.info(msg)
 
                 process = subprocess.run(  # noqa S603
                     [python_executable, manage, "video_consume", Path(filename).name],
