@@ -37,7 +37,6 @@ def copy_large_file(src, dst):
     '''
     Copy a large file showing progress.
     '''
-    print('copying "{}" --> "{}"'.format(src, dst))
     if os.path.exists(src) is False:
         print('ERROR: file does not exist: "{}"'.format(src))
         sys.exit(1)
@@ -89,9 +88,4 @@ def copy_large_file(src, dst):
                     chunk = ifp.read(chunk_size)
 
     except IOError as obj:
-        print('\nERROR: {}'.format(obj))
         sys.exit(1)
-
-    sys.stdout.write('\r\033[K')  # clear to EOL
-    elapsed = time.time() - start
-    print('copied "{}" --> "{}" in {:>.1f}s"'.format(src, dst, elapsed))

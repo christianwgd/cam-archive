@@ -1,6 +1,7 @@
 import logging
 import asyncio
 import subprocess
+import time
 
 from config import directory_to_watch, target_directory, python_executable, log_file, manage
 from pathlib import Path
@@ -24,15 +25,17 @@ async def main():
                 source_file = Path(directory_to_watch) / filename
                 target_dir = Path(target_directory) / filename
                 # Give the file some time to be written completely
-                await asyncio.sleep(2)
+                time.sleep(10)
 
                 # shutil.copy(source_file, target_dir)
+                msg = f"Copying {source_file} to {target_dir}"
+                logger.info(msg)
                 copy_large_file(source_file, target_dir)
                 msg = f"Copied {source_file} to {target_dir}"
                 logger.info(msg)
                 msg = '{file} copied.'.format(file=Path(filename).name)
                 logger.info(msg)
-                await asyncio.sleep(5)
+                time.sleep(10)
                 Path(source_file).unlink()
                 msg = f"Deleted {source_file}"
                 logger.info(msg)
