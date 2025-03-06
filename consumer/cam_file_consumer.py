@@ -24,9 +24,6 @@ async def main():
                 filename = Path(str(change[1])).name
                 source_file = Path(directory_to_watch) / filename
                 target_dir = Path(target_directory) / filename
-                # Give the file some time to be written completely
-                time.sleep(10)
-
                 # shutil.copy(source_file, target_dir)
                 msg = f"Copying {source_file} to {target_dir}"
                 logger.info(msg)
@@ -35,7 +32,6 @@ async def main():
                 logger.info(msg)
                 msg = '{file} copied.'.format(file=Path(filename).name)
                 logger.info(msg)
-                time.sleep(10)
                 Path(source_file).unlink()
                 msg = f"Deleted {source_file}"
                 logger.info(msg)
