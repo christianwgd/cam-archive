@@ -39,15 +39,15 @@ async def main():
                 msg = f"Deleted {source_file}"
                 logger.info(msg)
 
-                # process = subprocess.run(  # noqa S603
-                #     [python_executable, manage, "video_consume", Path(filename).name],
-                #     stdout=subprocess.PIPE,
-                #     stderr=subprocess.PIPE, check=False
-                # )
-                # msg = '{file} uploaded.'.format(file=Path(filename).name)
-                # logger.info(msg)
-                # msg = str(process.stderr)
-                # logger.error(msg)
+                process = subprocess.run(  # noqa S603
+                    [python_executable, manage, "video_consume", Path(filename).name],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE, check=False
+                )
+                msg = '{file} uploaded.'.format(file=Path(filename).name)
+                logger.info(msg)
+                msg = str(process.stderr)
+                logger.error(msg)
 
 
 loop = asyncio.run(main())
