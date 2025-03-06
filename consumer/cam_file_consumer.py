@@ -21,7 +21,7 @@ async def main():
     async for changes in awatch(directory_to_watch):
         for change in changes:
             if change[0] == Change.added:
-                sleep(5)  #
+                sleep(5)  # Give the file time to be written completely
                 filename = Path(str(change[1])).name
                 source_file = Path(directory_to_watch) / filename
                 target_file = Path(target_directory) / filename
