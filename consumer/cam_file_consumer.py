@@ -22,16 +22,13 @@ async def main():
             if change[0] == Change.added:
                 filename = Path(str(change[1])).name
                 source_file = Path(directory_to_watch) / filename
-                target_file = Path(target_directory) / filename
+                target_dir = Path(target_directory)
                 # Give the file some time to be written completely
                 await asyncio.sleep(2)
 
-                try:
-                    shutil.copy2(source_file, target_file)
-                    msg = f"Copied {source_file} to {target_file}"
-                    logger.info(msg)
-                except Exception as e:
-                    logger.exception(e)
+                shutil.copy(source_file, target_dir)
+                msg = f"Copied {source_file} to {target_dir}"
+                logger.info(msg)
                 msg = '{file} copied.'.format(file=Path(filename).name)
                 logger.info(msg)
                 await asyncio.sleep(2)
