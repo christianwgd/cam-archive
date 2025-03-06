@@ -25,13 +25,14 @@ async def main():
                 source_file = Path(directory_to_watch) / filename
                 target_file = Path(target_directory) / filename
                 # Give the file some time to be written completely
-                time.sleep(5)
+                time.sleep(2)
                 try:
                     new_file = shutil.move(str(source_file), str(target_file))
                     msg = f"Moved {filename} to {new_file}"
                     logger.info(msg)
                 except Exception as e:
                     logger.exception(e)
+                time.sleep(2)
                 process = subprocess.run(  # noqa S603
                     [python_executable, manage, "video_consume", Path(filename).name],
                     stdout=subprocess.PIPE,
