@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import shutil
 import subprocess
 from time import sleep
 
@@ -14,27 +13,24 @@ logger = logging.getLogger('cam-archive')
 logging.basicConfig(filename=log_file, encoding='utf-8', level=logging.DEBUG)
 
 
-# macos service definition: ~/Library/LaunchAgents/com.wgdnet.upload.agent.plist
-# restart: In Aktivitätsanzeige stoppen, startet automatisch
-
 async def main():
     async for changes in awatch(directory_to_watch):
         for change in changes:
             if change[0] == Change.added:
-                sleep(5)  # Give the file time to be written completely
+                # sleep(5)  # Give the file time to be written completely
                 filename = Path(str(change[1])).name
-                source_file = Path(directory_to_watch) / filename
-                target_file = Path(target_directory) / filename
-                msg = f"Copying {source_file} to {target_file}"
-                logger.info(msg)
-                shutil.copy2(source_file, target_file)
-                msg = f"Copied {source_file} to {target_file}"
-                logger.info(msg)
-                msg = '{file} copied.'.format(file=Path(filename).name)
-                logger.info(msg)
-                Path(source_file).unlink()
-                msg = f"Deleted {source_file}"
-                logger.info(msg)
+                # source_file = Path(directory_to_watch) / filename
+                # target_file = Path(target_directory) / filename
+                # msg = f"Copying {source_file} to {target_file}"
+                # logger.info(msg)
+                # shutil.copy2(source_file, target_file)
+                # msg = f"Copied {source_file} to {target_file}"
+                # logger.info(msg)
+                # msg = '{file} copied.'.format(file=Path(filename).name)
+                # logger.info(msg)
+                # Path(source_file).unlink()
+                # msg = f"Deleted {source_file}"
+                # logger.info(msg)
 
                 process = subprocess.run(  # noqa S603
                     [python_executable, manage, "video_consume", Path(filename).name],
