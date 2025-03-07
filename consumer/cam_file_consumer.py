@@ -3,7 +3,7 @@ import logging
 import subprocess
 from time import sleep
 
-from config import directory_to_watch, target_directory, python_executable, log_file, manage
+from config import directory_to_watch, python_executable, log_file, manage
 from pathlib import Path
 
 from watchgod import awatch, Change
