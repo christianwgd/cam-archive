@@ -76,8 +76,10 @@ def get_duration(instance):
             ffprobe = Path(ffmpeg_path) / 'ffprobe'
         result = subprocess.check_output([  # noqa: S603
             ffprobe,
-            "-v",  "error", "-select_streams", "v:0",
-            "-show_entries", "stream=duration", "-of",
+            "-v", "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
             "default=noprint_wrappers=1:nokey=1",
             instance.file.path
         ])
@@ -107,9 +109,9 @@ def create_thumbnail(instance):
             sec = 3
         subprocess.call([  # noqa: S603
             ffmpeg,
+            '-ss', f'00:00:0{sec}.000',
             '-y', '-i',
             instance.file.path,
-            '-ss', f'00:00:0{sec}',
             '-vframes', '1',
             thumb_path
         ])
