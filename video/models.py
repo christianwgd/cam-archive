@@ -1,6 +1,7 @@
 import shutil
 import subprocess
 from datetime import datetime
+from decimal import Decimal
 from pathlib import Path
 
 from django.conf import settings
@@ -82,7 +83,7 @@ class Video(models.Model):
                 "default=noprint_wrappers=1:nokey=1",
                 self.file.path
             ])
-            self.duration = int(result.decode().split('.')[0])
+            self.duration = round(Decimal(result.strip().decode("utf-8")))
             self.save()
 
     def set_thumbnail(self):
