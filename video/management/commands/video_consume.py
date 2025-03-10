@@ -53,5 +53,6 @@ class Command(BaseCommand):
         video.file.name = str(video_path)
         video.save()
         video.set_duration()
+        logger.info('Video duration is %s sec', video.duration )
         video.set_thumbnail()
 
