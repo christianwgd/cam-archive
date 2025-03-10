@@ -17,8 +17,13 @@ from django.utils.timezone import make_aware
 
 from camera.models import Camera
 from video.admin import VideoAdmin
-from video.models import Video, get_name_from_file_name, get_camera_from_file_name, get_timestamp_from_file_name, \
-    get_timestamp_from_string, create_thumbnail, get_duration
+from video.models import (
+    Video,
+    get_name_from_file_name,
+    get_camera_from_file_name,
+    get_timestamp_from_file_name,
+    get_timestamp_from_string
+)
 from faker import Faker
 
 
@@ -106,16 +111,17 @@ class TestVideoModel(TestCase):
         self.video.delete()
         self.assertFalse(self.video.file and Path(self.video.file.path).is_file())
 
-    def test_create_thumbnail(self):
+    def test_video_set_thumbnail(self):
         self.assertFalse(self.video.thumbnail)
-        create_thumbnail(self.video)
+        self.video.set_thumbnail()
+        self.video.refresh_from_db()
         self.assertTrue(self.video.thumbnail)
         self.assertTrue(Path(self.video.thumbnail.path).is_file())
 
-    def test_get_duration(self):
+    def test_video_set_duration(self):
         self.assertEqual(0, self.video.duration)
-        self.video.duration = get_duration(self.video)
-        self.video.save()
+        self.video.set_duration()
+        self.video.refresh_from_db()
         self.assertIsInstance(self.video.duration, int)
         self.assertTrue(self.video.duration > 0)
 

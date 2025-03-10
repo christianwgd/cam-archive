@@ -5,8 +5,10 @@ from pathlib import Path
 from django.core.management.base import BaseCommand
 
 from camera.models import Camera
-from video.models import Video, get_name_from_file_name, get_timestamp_from_file_name, \
-    get_timestamp_from_string, create_thumbnail, get_camera_from_file_name, get_duration
+from video.models import (
+    Video, get_name_from_file_name, get_timestamp_from_file_name,
+    get_timestamp_from_string, get_camera_from_file_name
+)
 
 logger = getLogger('cam_archive')
 
@@ -50,6 +52,6 @@ class Command(BaseCommand):
         video_path = Path('videos') / file_name
         video.file.name = str(video_path)
         video.save()
-        video.duration = get_duration(video)
-        create_thumbnail(video)
-        video.save()
+        video.set_duration()
+        video.set_thumbnail()
+

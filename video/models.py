@@ -66,56 +66,51 @@ class Video(models.Model):
         help_text=_('Duration of the video in seconds')
     )
 
-
-def get_duration(instance):
-    if instance.file:
-        ffmpeg_path = getattr(settings, 'FFMPEG_BIN', None)
-        if not ffmpeg_path:
-            ffprobe = shutil.which('ffprobe')
-        else:
-            ffprobe = Path(ffmpeg_path) / 'ffprobe'
-        result = subprocess.check_output([  # noqa: S603
-            ffprobe,
-            "-v", "error",
-            "-show_entries",
-            "format=duration",
-            "-of",
-            "default=noprint_wrappers=1:nokey=1",
-            instance.file.path
-        ])
-        return int(result.decode().split('.')[0])
-    return 0
-
-
-def create_thumbnail(instance):
-    """
-    Creates thumbnail file for video file
-    and sets it to corresponding `Video` object.
-    """
-    if instance.file:
-        ffmpeg_path = getattr(settings, 'FFMPEG_BIN', None)
-        if not ffmpeg_path:
-            ffmpeg = shutil.which('ffmpeg')
-        else:
-            ffmpeg = Path(ffmpeg_path) / 'ffmpeg'
-        thumb_name = f'thumbs/thumb-{get_name_from_file_name(instance.file.name)}.jpg'
-        thumb_path = Path(settings.MEDIA_ROOT) / thumb_name
-        if instance.duration:
-            if instance.duration > 5:
-                sec = 5
+    def set_duration(self):
+        if self.file:
+            ffmpeg_path = getattr(settings, 'FFMPEG_BIN', None)
+            if not ffmpeg_path:
+                ffprobe = shutil.which('ffprobe')
             else:
-                sec = instance.duration
-        else:
-            sec = 3
-        subprocess.call([  # noqa: S603
-            ffmpeg,
-            '-ss', f'00:00:0{sec}.000',
-            '-y', '-i',
-            instance.file.path,
-            '-vframes', '1',
-            thumb_path
-        ])
-        instance.thumbnail.name = str(thumb_name)
+                ffprobe = Path(ffmpeg_path) / 'ffprobe'
+            result = subprocess.check_output([  # noqa: S603
+                ffprobe,
+                "-v", "error",
+                "-show_entries",
+                "format=duration",
+                "-of",
+                "default=noprint_wrappers=1:nokey=1",
+                self.file.path
+            ])
+            self.duration = int(result.decode().split('.')[0])
+            self.save()
+
+    def set_thumbnail(self):
+        if self.file:
+            ffmpeg_path = getattr(settings, 'FFMPEG_BIN', None)
+            if not ffmpeg_path:
+                ffmpeg = shutil.which('ffmpeg')
+            else:
+                ffmpeg = Path(ffmpeg_path) / 'ffmpeg'
+            thumb_name = f'thumbs/thumb-{get_name_from_file_name(self.file.name)}.jpg'
+            thumb_path = Path(settings.MEDIA_ROOT) / thumb_name
+            if self.duration:
+                if self.duration > 5:
+                    sec = 5
+                else:
+                    sec = self.duration
+            else:
+                sec = 3
+            subprocess.call([  # noqa: S603
+                ffmpeg,
+                '-ss', f'00:00:0{sec}.000',
+                '-y', '-i',
+                self.file.path,
+                '-vframes', '1',
+                thumb_path
+            ])
+            self.thumbnail.name = str(thumb_name)
+            self.save()
 
 
 @receiver(models.signals.post_delete, sender=Video)

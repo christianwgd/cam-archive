@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.utils.translation import gettext_lazy as _
 
-from video.models import Video, create_thumbnail, get_duration
+from video.models import Video
 
 
 @admin.register(Video)
@@ -15,14 +15,12 @@ class VideoAdmin(admin.ModelAdmin):
     @admin.action(description=_('Generate thumbnail for video'))
     def generate_thumbnail(self, request, queryset):
         for obj in queryset:
-            create_thumbnail(obj)
-            obj.save()
+            obj.set_thumbnail()
             messages.success(request, _('Successfully generated thumbnail for %s"') % obj)
 
     @admin.action(description=_('Set video duration'))
     def set_duration(self, request, queryset):
         for obj in queryset:
             if obj.file is not None:
-                obj.duration = get_duration(obj)
-                obj.save()
+                obj.set_duration()
                 messages.success(request, _('Successfully set duration for %s"') % obj)
