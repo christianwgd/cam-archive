@@ -50,6 +50,6 @@ class Command(BaseCommand):
         video_path = Path('videos') / file_name
         video.file.name = str(video_path)
         video.save()
-        create_thumbnail(video)
         video.duration = get_duration(video)
+        create_thumbnail(video)
         video.save()
