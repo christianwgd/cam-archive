@@ -22,10 +22,12 @@ logging.basicConfig(
 async def main():
     async for changes in awatch(directory_to_watch):
         for change in changes:
-            logger.info(f'Processing change: {change}')
+            msg = f'Processing change: {change}'
+            logger.info(msg)
             if change[0] == Change.added:
                 filename = Path(str(change[1])).name
-                logger.info(f'Processing filename: {filename}')
+                msg = f'Processing filename: {filename}'
+                logger.info(msg)
                 process = subprocess.run(  # noqa S603
                     [python_executable, manage, "video_consume", Path(filename).name],
                     stdout=subprocess.PIPE,
@@ -39,9 +41,6 @@ async def main():
                 else:
                     msg = '{file} uploaded.'.format(file=Path(filename).name)
                     logger.info(msg)
-
-                # msg = str(process.stderr)
-                # logger.info(msg)
 
 
 loop = asyncio.run(main())
