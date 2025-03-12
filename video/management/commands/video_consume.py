@@ -38,7 +38,7 @@ class Command(BaseCommand):
         self.style.SUCCESS(msg)
 
         if mimetypes.guess_type(file_name)[0] not in ['video/mp4']:
-            msg = 'Video file "%s"' % file_name
+            msg = '"%s" is not a video file' % file_name
             logger.error(msg)
             self.style.ERROR(msg)
 
