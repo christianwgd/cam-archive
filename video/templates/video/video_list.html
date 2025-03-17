@@ -27,18 +27,23 @@
                  class="accordion-collapse collapse{% if forloop.parentloop.first and forloop.first %} show{% endif %}"
                  data-bs-parent="#accordion-{{ month_group.grouper|slugify }}">
                 <div class="accordion-body">
-                    <div class="row row-cols-8 g-4">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
                     {% for video in day_group.list %}
                         <div class="col text-center">
-                            <a href="{{ video.get_absolute_url }}">
-                                {% if video.thumbnail %}
-                                    <img src="{{ video.thumbnail.url }}" width="100" alt="">
-                                {% else %}
-                                    <img src="{% static 'img/video-movie.svg' %}" width="100" alt="">
-                                {% endif %}
-                            </a>
-                            <h6 class="card-title">{{ video.timestamp|date:"H:i:s" }}</h6>
-                            <h6 class="card-text">{{ video.camera }}</h6>
+                            <div class="card">
+                                <a href="{{ video.get_absolute_url }}">
+                                    {% if video.thumbnail %}
+                                        <img class="card-img-top" src="{{ video.thumbnail.url }}" alt="">
+                                    {% else %}
+                                        <img class="card-img-top" src="{% static 'img/video-movie.svg' %}" alt="">
+                                    {% endif %}
+                                </a>
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        {{ video.timestamp|date:"H:i:s" }} {{ video.camera }}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     {% endfor %}
                     </div>
