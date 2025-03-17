@@ -4,7 +4,8 @@
 {% block page_title %}{{ video.timestamp }}{% endblock %}
 
 {% block content %}
-<video style="display: block; margin: 0 auto;" width="100%" height="auto"
+<video style="display: block; margin: 0 auto;" width="100%" height="auto" labe="{{ video.name }}"
+       {% if video.thumbnail %}poster="{{ video.thumbnail.url }}"{% endif %}
        preload="" controls src="{{ video.file.url }}" type="video/mp4">
 </video>
 
