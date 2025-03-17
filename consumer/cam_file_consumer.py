@@ -1,12 +1,13 @@
 import asyncio
 import logging
 import subprocess
+import time
 from logging.handlers import RotatingFileHandler
 
 from config import directory_to_watch, python_executable, log_file, manage
 from pathlib import Path
 
-from watchgod import awatch, Change
+from watchfiles import awatch, Change
 
 
 logger = logging.getLogger('cam-archive')
@@ -26,7 +27,8 @@ async def main():
             logger.info(msg)
             if change[0] == Change.added:
                 filename = Path(str(change[1])).name
-                msg = f'Processing filename: {filename}'
+                msg = f'File created: {filename}, waiting 30 to complete upload.'
+                time.sleep(30)
                 logger.info(msg)
                 process = subprocess.run(  # noqa S603
                     [python_executable, manage, "video_consume", Path(filename).name],
