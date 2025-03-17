@@ -27,8 +27,8 @@ async def main():
             logger.info(msg)
             if change[0] == Change.added:
                 filename = Path(str(change[1])).name
-                msg = f'File created: {filename}, waiting 30 to complete upload.'
-                time.sleep(30)
+                msg = f'File created: {filename}, waiting 40 sec to complete upload.'
+                time.sleep(40)
                 logger.info(msg)
                 process = subprocess.run(  # noqa S603
                     [python_executable, manage, "video_consume", Path(filename).name],
