@@ -18,6 +18,7 @@ urlpatterns = [
 
     # Startseite
     path('', RedirectView.as_view(url="video/list/"), name='home'),
+    path('favicon.ico', RedirectView.as_view(url='/static/favicon/favicon.ico')),
 ]
 if settings.DEBUG:  # pragma: no cover
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
