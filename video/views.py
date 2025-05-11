@@ -36,6 +36,13 @@ def ring(request):  # pragma: no cover
     if token != settings.RING_TOKEN:
         return HttpResponse(status=403)
 
+    token = request.headers.get('X-API-Key', None)
+    api_token = getattr(settings, 'API_TOKEN', None)
+    if not api_token or not token:
+        return HttpResponse(status=403)
+    if token != api_token:
+        return HttpResponse(status=403)
+
     timestamp = timezone.now()
     dt_str = date_format(timezone.now(), 'SHORT_DATETIME_FORMAT')
     msg = f"Get video thumbnail for timestamp {dt_str}"

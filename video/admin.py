@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.utils.translation import gettext_lazy as _
 
-from video.models import Video
+from video.models import Video, Ring
 
 
 @admin.register(Video)
@@ -24,3 +24,9 @@ class VideoAdmin(admin.ModelAdmin):
             if obj.file is not None:
                 obj.set_duration()
                 messages.success(request, _('Successfully set duration for %s"') % obj)
+
+
+@admin.register(Ring)
+class RingAdmin(admin.ModelAdmin):
+    list_display = ['timestamp']
+    # date_hierarchy = 'timestamp'

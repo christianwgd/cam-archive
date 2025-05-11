@@ -55,4 +55,5 @@ class Command(BaseCommand):
         video.set_duration()
         logger.info('Video duration is %s sec', video.duration )
         video.set_thumbnail()
+        video.check_send_thumbnail()
 
