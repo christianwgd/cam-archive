@@ -1,5 +1,7 @@
 import shutil
 import subprocess
+import requests
+from logging import getLogger
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
@@ -12,6 +14,9 @@ from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 
 from camera.models import Camera
+
+
+logger = getLogger('cam_archive')
 
 
 def get_name_from_file_name(file_name):
@@ -112,6 +117,59 @@ class Video(models.Model):
             ])
             self.thumbnail.name = str(thumb_name)
             self.save()
+
+    def check_send_thumbnail(self):  # pragma: no cover
+        ring_signals = Ring.objects.all()
+        if ring_signals.count() > 0 and self.thumbnail:
+            ring = ring_signals.first()
+            msg = f"Sending thumbnail to Telegram for ring at {ring.timestamp}"
+            logger.info(msg)
+            token = getattr(settings, 'TELEGRAM_TOKEN', None)
+            chat_id = getattr(settings, 'TELEGRAM_CHAT_ID', None)
+            api_url = f'https://api.telegram.org/bot{token}/sendPhoto'
+            if token is not None and chat_id is not None:
+                message = ''
+                params = {
+                    'chat_id': chat_id,
+                    'text': message,
+                    'parse_mode': 'markdown'
+                }
+
+                # Send the HTTP request
+                with open(self.thumbnail.path, "rb") as image_file:
+                    response = requests.post(
+                        api_url, data=params,
+                        files={"photo": image_file},
+                        timeout=10
+                    )
+
+                # Check if the request was successful
+                if response.status_code == 200:
+                    msg = f"Message sent successfully! Response: {response.json()}"
+                    logger.info(msg)
+                else:
+                    msg = f"Failed to send message. Status code: {response.status_code}, Response: {response.text}"
+                    logger.error(msg)
+
+            else:
+                logger.error('Telegram token or chat id not found.')
+            ring.delete()
+
+
+class Ring(models.Model):
+
+    class Meta:
+        verbose_name = _('Ring')
+        verbose_name_plural = _('Rings')
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return self.timestamp
+
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('timestamp')
+    )
 
 
 @receiver(models.signals.post_delete, sender=Video)
