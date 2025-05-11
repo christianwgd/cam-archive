@@ -1,5 +1,5 @@
-Django==5.2
-django-axes==7.0.2
+Django==5.2.1
+django-axes==8.0.0
 django-bootstrap-icons==0.9.0
 django-bootstrap-datepicker-plus==5.0.5
 django-bootstrap5==25.1
@@ -9,6 +9,8 @@ django-filter==25.1
 django-phonenumber-field < 7.0.0
 django-select2==8.4.0
 django-two-factor-auth==1.17.0
-phonenumbers==9.0.2
+phonenumbers==9.0.5
 psycopg2-binary==2.9.10
-watchfiles==1.0.4
+python-dateutil==2.9.0.post0
+requests==2.32.3
+watchfiles==1.0.5
