@@ -2,11 +2,9 @@ from logging import getLogger
 
 from django.conf import settings
 from django.http import HttpResponse
-from django.utils.formats import date_format
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.http import require_GET
 from django.views.generic import ListView, DetailView
-from django.utils import timezone
 
 from video.models import Video, Ring
 
@@ -35,7 +33,7 @@ def ring(request):
         return HttpResponse(status=403)
     if token != api_token:
         return HttpResponse(status=403)
-    msg = f"Request video thumbnail by creatin a new ring sgnal"
+    msg = "Request video thumbnail by creatin a new ring sgnal"
     logger.info(msg)
     ring = Ring.objects.create()
     msg = f"Ring signal created at {ring.timestamp}"
