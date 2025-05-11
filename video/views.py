@@ -35,10 +35,8 @@ def ring(request):
         return HttpResponse(status=403)
     if token != api_token:
         return HttpResponse(status=403)
-
-    timestamp = timezone.now()
-    dt_str = date_format(timezone.now(), 'SHORT_DATETIME_FORMAT')
-    msg = f"Get video thumbnail for timestamp {dt_str}"
+    msg = f"Request video thumbnail by creatin a new ring sgnal"
     logger.info(msg)
-    Ring.objects.create()
+    ring = Ring.objects.create()
+    msg = f"Ring signal created at {ring.timestamp}"
     return HttpResponse(status=201)
