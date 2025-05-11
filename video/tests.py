@@ -4,13 +4,14 @@ from io import BytesIO, StringIO
 from pathlib import Path
 
 import pytest
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.admin import AdminSite
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command, CommandError
 from django.test import TestCase, RequestFactory
-from django.utils import timezone
+from django.utils import timezone, formats
 from django.utils.dateformat import format
 from django.urls import reverse
 from django.utils.timezone import make_aware
@@ -22,7 +23,7 @@ from video.models import (
     get_name_from_file_name,
     get_camera_from_file_name,
     get_timestamp_from_file_name,
-    get_timestamp_from_string
+    get_timestamp_from_string, Ring
 )
 from faker import Faker
 
@@ -304,3 +305,34 @@ class CommandsTestCase(TestCase):
             )
         out = self.call_command("video_delete")
         self.assertIn("Deleted 3 videos", out)
+
+
+class RingTestCase(TestCase):
+
+    def setUp(self):
+        self.ring = Ring.objects.create()
+
+    def tearDown(self):
+        self.ring.delete()
+
+    def test_ring_repr(self):
+        self.assertEqual(
+            str(self.ring),
+            formats.date_format(
+                self.ring.timestamp,
+                format='DATETIME_FORMAT',
+                use_l10n=True
+            )
+        )
+
+    def test_ring_view_function(self):
+        headers = {
+            "Content-Type" : "application/json",
+            "x-api-key": settings.API_TOKEN,
+        }
+        response = self.client.get(reverse('video:ring'), headers=headers)
+        self.assertEqual(response.status_code, 201)
+        rings = Ring.objects.all()
+        # There should be 2 ring instances, the one created in setUp
+        # and the one created from view function call above
+        self.assertEqual(rings.count(), 2)

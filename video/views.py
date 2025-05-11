@@ -25,17 +25,10 @@ class VideoDetailView(LoginRequiredMixin, DetailView):
 
 
 @require_GET
-def ring(request):  # pragma: no cover
+def ring(request):
     """
     Create a "ring" signal for the next uploaded video.
     """
-    token = request.META.get('HTTP_AUTHORIZATION', None)
-    api_token = getattr(settings, 'API_TOKEN', None)
-    if not api_token or not token:
-        return HttpResponse(status=403)
-    if token != settings.RING_TOKEN:
-        return HttpResponse(status=403)
-
     token = request.headers.get('X-API-Key', None)
     api_token = getattr(settings, 'API_TOKEN', None)
     if not api_token or not token:
@@ -46,9 +39,6 @@ def ring(request):  # pragma: no cover
     timestamp = timezone.now()
     dt_str = date_format(timezone.now(), 'SHORT_DATETIME_FORMAT')
     msg = f"Get video thumbnail for timestamp {dt_str}"
-    logger.info(msg)
-    video = Video.objects.order_by('timestamp').filter(timestamp__lte=timestamp).last()
-    msg = f"Video: {video}, Timestamp: {video.timestamp}, Thumbnail: {video.thumbnail}"
     logger.info(msg)
     Ring.objects.create()
     return HttpResponse(status=201)
