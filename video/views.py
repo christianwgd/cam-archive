@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.views.decorators.http import require_GET
 from django.views.generic import ListView, DetailView
-from django.utils import dateparse
+from django.utils import timezone
 
 from video.models import Video
 
@@ -27,11 +27,11 @@ class VideoDetailView(LoginRequiredMixin, DetailView):
 
 
 @require_GET
-def send_video_thumbnail(request, timestamp_iso):
+def send_video_thumbnail(request):  # pragma: no cover
     """
     Send video thumbnail to telegram channel
     """
-    timestamp = dateparse.parse_datetime(timestamp_iso)
+    timestamp = timezone.now()
     dt_str = date_format(timestamp, 'SHORT_DATETIME_FORMAT')
     msg = f"Get video thumbnail for timestamp {dt_str}"
     logger.info(msg)
