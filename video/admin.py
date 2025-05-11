@@ -29,4 +29,4 @@ class VideoAdmin(admin.ModelAdmin):
 @admin.register(Ring)
 class RingAdmin(admin.ModelAdmin):
     list_display = ['timestamp']
-    # date_hierarchy = 'timestamp'
+    date_hierarchy = 'timestamp'
