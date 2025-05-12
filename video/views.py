@@ -33,7 +33,7 @@ def ring(request):
         return HttpResponse(status=403)
     if token != api_token:
         return HttpResponse(status=403)
-    msg = "Request video thumbnail by creatin a new ring sgnal"
+    msg = "Request video thumbnail by creatin a new ring signal"
     logger.info(msg)
     ring = Ring.objects.create()
     msg = f"Ring signal created at {ring.timestamp}"
