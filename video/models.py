@@ -107,7 +107,7 @@ class Video(models.Model):
                 else:
                     sec = self.duration
             else:
-                sec = 3
+                sec = 5
             subprocess.call([  # noqa: S603
                 ffmpeg,
                 '-ss', f'00:00:0{sec}.000',
