@@ -154,10 +154,9 @@ class Video(models.Model):
 
             else:
                 logger.error('Telegram token or chat id not found.')
-            # Delete all Rings after sending the thumbnail, so no
-            # rings are left over from double pressing bell button
-            Ring.objects.all().delete()
-
+        # Delete all Rings after sending the thumbnail, so no
+        # rings are left over from double pressing bell button
+        ring_signals.delete()
 
 class Ring(models.Model):
 
