@@ -72,6 +72,10 @@ class Video(models.Model):
         verbose_name=_('duration'), default=0, null=True, blank=True,
         help_text=_('Duration of the video in seconds')
     )
+    telegram = models.BooleanField(
+        verbose_name=_('Sent to telegram'), default=False,
+        help_text=_('Thumbnail sent to telegram')
+    )
 
     def set_duration(self):
         if self.file:
@@ -148,6 +152,8 @@ class Video(models.Model):
                 if response.status_code == 200:
                     msg = f"Message sent successfully! Response: {response.json()}"
                     logger.info(msg)
+                    self.telegram = True
+                    self.save()
                 else:
                     msg = f"Failed to send message. Status code: {response.status_code}, Response: {response.text}"
                     logger.error(msg)

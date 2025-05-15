@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static i18n django_bootstrap5 %}
+{% load static i18n django_bootstrap5 bootstrap_icons %}
 
 {% block page_title %}{% endblock %}
 
@@ -41,6 +41,9 @@
                                 <div class="card-body">
                                     <p class="card-text">
                                         {{ video.timestamp|date:"H:i:s" }} {{ video.camera }}
+                                        {% if video.telegram %}
+                                            {% bs_icon 'telegram' color='#5D8FC2' %}
+                                        {% endif %}
                                     </p>
                                 </div>
                             </div>
