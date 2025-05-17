@@ -129,6 +129,9 @@ class Video(models.Model):
             ring = ring_signals.first()
             msg = f"Sending thumbnail to Telegram for ring at {ring.timestamp}"
             logger.info(msg)
+            # Delete all Rings after sending the thumbnail, so no
+            # rings are left over from double pressing bell button
+            ring_signals.delete()
             token = getattr(settings, 'TELEGRAM_TOKEN', None)
             chat_id = getattr(settings, 'TELEGRAM_CHAT_ID', None)
             api_url = f'https://api.telegram.org/bot{token}/sendPhoto'
@@ -160,9 +163,7 @@ class Video(models.Model):
 
             else:
                 logger.error('Telegram token or chat id not found.')
-        # Delete all Rings after sending the thumbnail, so no
-        # rings are left over from double pressing bell button
-        ring_signals.delete()
+
 
 class Ring(models.Model):
 
