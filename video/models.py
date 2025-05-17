@@ -125,6 +125,7 @@ class Video(models.Model):
 
     def check_send_thumbnail(self):  # pragma: no cover
         ring_signals = Ring.objects.all()
+        msg = f"Checking for ring signals: {ring_signals.count()}"
         if ring_signals.count() > 0 and self.thumbnail:
             ring = ring_signals.first()
             msg = f"Sending thumbnail to Telegram for ring at {ring.timestamp}"
@@ -132,6 +133,7 @@ class Video(models.Model):
             # Delete all Rings after sending the thumbnail, so no
             # rings are left over from double pressing bell button
             ring_signals.delete()
+            msg = f"Deleted, should be 0: {Ring.objects.all().count()}"
             token = getattr(settings, 'TELEGRAM_TOKEN', None)
             chat_id = getattr(settings, 'TELEGRAM_CHAT_ID', None)
             api_url = f'https://api.telegram.org/bot{token}/sendPhoto'
