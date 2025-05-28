@@ -7,9 +7,9 @@ django-bootstrap5-dark-mode-switch==0.2.2
 django-filter==25.1
 # django-two-factor-auth depends on
 django-phonenumber-field < 7.0.0
-django-select2==8.4.0
+django-select2==8.4.1
 django-two-factor-auth==1.17.0
-phonenumbers==9.0.5
+phonenumbers==9.0.6
 psycopg2-binary==2.9.10
 python-dateutil==2.9.0.post0
 requests==2.32.3
