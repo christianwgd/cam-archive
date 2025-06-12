@@ -1,5 +1,4 @@
-
-# Django settings for measurement project.
+# Django settings for camera archive project.
 
 import sys
 from pathlib import Path
@@ -65,14 +64,14 @@ STATIC_ROOT = Path(BASE_DIR) / 'static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = Path(BASE_DIR) / 'media'
 
-LOGIN_URL = 'two_factor:login'
+LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'account_login'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -95,15 +94,12 @@ MIDDLEWARE = [
     'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'axes.middleware.AxesMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
-    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
-    'axes.backends.AxesBackend',
-
-    # Django ModelBackend is the default authentication backend.
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'cam_archive.urls'
@@ -119,16 +115,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'axes',
-    'frontend_auth',
     'cam_archive',
+    'allauth',
+    'allauth.account',
+    'allauth.mfa',
     'video',
     'camera',
     'django_filters',
-    'django_otp',
-    'django_otp.plugins.otp_static',
-    'django_otp.plugins.otp_totp',
-    'two_factor',
     'dark_mode_switch',
     'django_bootstrap_icons',
     'django_bootstrap5',
@@ -141,6 +134,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 BOOTSTRAP5 = {
     # 'theme_url': '/static/css/bootstrap.min.css',
 }
+
+# All-auth settings
+ACCOUNT_LOGIN_METHODS = {"username"}
+MFA_PASSKEY_LOGIN_ENABLED = True
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',

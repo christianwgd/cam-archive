@@ -1,18 +1,20 @@
+from allauth.account.decorators import secure_admin_login
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
-from two_factor.urls import urlpatterns as tf_urls
 
 
+admin.autodiscover()
 admin.site.site_header = _('Cam Archive')
+admin.site.login = secure_admin_login(admin.site.login)
 
 urlpatterns = [
-    path('', include(tf_urls)),
     path('admin/', admin.site.urls),
-    path('frontend_auth/', include('frontend_auth.urls')),
+    path('accounts/signup/', RedirectView.as_view(url='/', permanent=True)),
+    path('accounts/', include('allauth.urls')),
     path('video/', include('video.urls')),
     path('camera/', include('camera.urls')),
 

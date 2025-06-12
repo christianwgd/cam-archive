@@ -71,18 +71,18 @@
                         {% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <form class="success" id="logout-form" action="{% url 'frontend_auth:logout' %}" method="post">
+                        <form class="success" id="logout-form" action="{% url 'account_logout' %}" method="post">
                             {% csrf_token %}
                             <button class="dropdown-item btn-link" type="submit">
                                 {% bs_icon 'box-arrow-in-right' %}
                                 {% trans 'Log out' %}
                             </button>
                         </form>
-                        <a class="dropdown-item" href="{% url 'frontend_auth:password_change' %}">
+                        <a class="dropdown-item" href="{% url 'account_set_password' %}">
                             {% bs_icon 'key' %}
                             {% trans 'Password change' %}
                         </a>
-                        <a class="dropdown-item" href="{% url 'two_factor:profile' %}">
+                        <a class="dropdown-item" href="{% url 'mfa_index' %}">
                             {% bs_icon 'person-fill-gear' %}
                             {% trans 'Two factor authentication' %}
                         </a>
@@ -106,9 +106,9 @@
 
     <div class="row mb-5">
         <div class="col-12">
-        <h3 style="text-align: center;">{% block page_title %}(no content){% endblock %}</h3>
+        <h3 style="text-align: center;">{% block page_title %}{% endblock %}</h3>
         {% bootstrap_messages %}
-        {% block content %}(no content){% endblock %}
+        {% block content %}{% endblock %}
         </div>
     </div>
 
