@@ -1,4 +1,4 @@
-<p align="center"><img src="cam_archive/static/img/cam_arch.svg" width=200em alt="" /></p>
+<p align="center"><img src="cam_archive/static/img/camera.svg" width=200em alt="" /></p>
 
 <div align="center">
 
