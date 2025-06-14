@@ -23,4 +23,3 @@ class TestCameraModel(TestCase):
             self.camera.get_absolute_url(),
             reverse('camera:detail', kwargs={'pk': self.camera.pk})
         )
-
