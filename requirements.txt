@@ -1,4 +1,4 @@
-Django==5.2.3
+Django==5.2.4
 django-allauth[mfa]==65.9.0
 django-bootstrap-icons==0.9.0
 django-bootstrap-datepicker-plus==5.0.5
@@ -9,4 +9,4 @@ django-select2==8.4.1
 psycopg2-binary==2.9.10
 python-dateutil==2.9.0.post0
 requests==2.32.4
-watchfiles==1.0.5
+watchfiles==1.1.0
