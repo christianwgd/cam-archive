@@ -26,7 +26,7 @@
                 {% trans "Sign In" %}
             {% endelement %}
             {% if "webauthn" not in MFA_SUPPORTED_TYPES %}
-                {% element button type="submit" form="logout-from-stage" tags="link,mfa,cancel" %}
+                {% element button type="submit" class="secondary" form="logout-from-stage" tags="link,mfa,cancel" %}
                     {% trans "Cancel" %}
                 {% endelement %}
             {% endif %}
