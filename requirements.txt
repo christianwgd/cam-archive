@@ -1,8 +1,8 @@
-Django==5.2.4
-django-allauth[mfa]==65.9.0
+Django==5.2.5
+django-allauth[mfa]==65.10.0
 django-bootstrap-icons==0.9.0
 django-bootstrap-datepicker-plus==5.0.5
-django-bootstrap5==25.1
+django-bootstrap5==25.2
 django-bootstrap5-dark-mode-switch==0.2.2
 django-filter==25.1
 django-select2==8.4.1
