@@ -8,6 +8,7 @@ from video.models import Video, Ring
 class VideoAdmin(admin.ModelAdmin):
 
     list_display = ['name', 'timestamp', 'duration']
+    list_filter = ['camera']
     date_hierarchy = 'timestamp'
     search_fields = ['name']
     actions = ['generate_thumbnail', 'set_duration']
