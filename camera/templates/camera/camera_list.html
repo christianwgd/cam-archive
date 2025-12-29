@@ -4,9 +4,23 @@
 {% block page_title %}{% endblock %}
 
 {% block content %}
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
 {% for camera in camera_list %}
-    <ul>
-        <li>{{ camera }} {{ camera.manufacturer }} {{ camera.model }}</li>
-    </ul>
+    <div class="col text-center">
+        <div class="card">
+            {% if camera.image %}
+                <img class="card-img-top" src="{{ camera.image.url }}" alt="">
+            {% else %}
+                <img class="card-img-top" src="{% static 'img/camera.svg' %}" alt="">
+            {% endif %}
+            <div class="card-body">
+                <p class="card-text">
+                    <h4>{{ camera.name}}</h4>
+                    {{ camera.manufacturer }} {{ camera.model }}
+                </p>
+            </div>
+        </div>
+    </div>
 {% endfor %}
+</div>
 {% endblock %}

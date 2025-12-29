@@ -25,4 +25,7 @@ class Camera(models.Model):
     model = models.CharField(
         verbose_name=_('model'), max_length=255, null=True, blank=True,
     )
+    image = models.ImageField(
+        verbose_name=_('Image'), upload_to='camera/', null=True, blank=True,
+    )
 
