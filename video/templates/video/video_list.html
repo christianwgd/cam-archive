@@ -1,20 +1,70 @@
 {% extends "base.html" %}
 {% load static i18n django_bootstrap5 bootstrap_icons %}
 
+{% block bootstrap5_extra_script %}
+{{ block.super }}
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('filter').addEventListener('click', function() {
+        // Bootstrap-Modal manuell anzeigen
+        var modal = new bootstrap.Modal(document.getElementById('filterModal'));
+        modal.show();
+    });
+});
+</script>
+{% endblock %}
+
+
 {% block page_title %}{% endblock %}
 
 {% block content %}
-<div class="row mb-3">
-    <div class="col-12 col-md-6">
-        <form action="" method="get" id="filterForm" class="form-horizontal">
-            {% csrf_token %}
-            {% bootstrap_form filter.form size='sm' %}
-            <button class="btn btn-sm btn-primary" type="submit">
-                {% bs_icon 'funnel' %}
-            </button>
-        </form>
+<div class="modal fade mt-5" id="filterModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">{% trans 'Filter' %}</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form action="" method="get" id="filterForm">
+                    {% csrf_token %}
+                    {% bootstrap_form filter.form %}
+                    <button class="btn btn-sm btn-primary" type="submit">
+                        {% bs_icon 'funnel' %}
+                    </button>
+                </form>
+            </div>
+
+        </div>
     </div>
 </div>
+
+<div class="row filter">
+    <div class="col">
+        <h6 class="filter-label">
+            {% trans 'Filter' %}
+        </h6>
+        <button class="btn btn-sm btn-primary" id="filter" title="{% trans 'Filter' %}">
+            {% bs_icon 'funnel' %}
+        </button>
+        <a href="{% url 'video:list' %}" class="btn btn-sm btn-secondary" title="{% trans 'Remove filter' %}">
+            {% bs_icon 'x-lg' %}
+        </a>
+        {% for field in filter.form %}
+            {% if field.value %}
+                <span class="badge bg-secondary">
+                {{ field.label }}: {{ field.value }}
+{#                {% name_from_id field.label field.value %}#}
+                </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
 
 {% regroup video_list by timestamp|date:"F Y" as objects_by_month %}
 {% for month_group in objects_by_month %}
