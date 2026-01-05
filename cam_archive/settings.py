@@ -146,9 +146,6 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# disable axes if debug True
-AXES_ENABLED = not DEBUG
-
 # Ring api token
 API_TOKEN = '&ft9o6r+9rc8l%&u#!3n(d&&g(f^fg74y)^d#(fx0i+@as-atf'  # noqa: S105
 
