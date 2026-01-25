@@ -1,5 +1,7 @@
 import asyncio
 import logging
+import subprocess
+import time
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -25,24 +27,19 @@ async def main():
                 filename = Path(str(change[1])).name
                 msg = f"File created: {filename}, waiting 40 sec to complete upload."
                 logger.info(msg)
-                # await asyncio.sleep(40)
-                process = asyncio.create_subprocess_exec(
-                    python_executable, manage, "video_consume", Path(filename).name,
-                    stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+                time.sleep(40)  # noqa: ASYNC251
+                logger.info("Starting video consuming process...")
+                process = subprocess.run(  # noqa: S603, ASYNC221
+                    [python_executable, manage, "video_consume", Path(filename).name],
+                    capture_output=True, check=False,
                 )
-                stdout, stderr = await process.communicate()
-                logger.info(f"Process completed: {process.returncode}")
-                logger.info(f"Stdout: {stdout.decode()}")
-                logger.info(f"Stderr: {stderr.decode()}")
                 if process.returncode != 0:
                     msg = f"Error processing {Path(filename).name}"
                     logger.error(msg)
-                    msg = str(stderr.decode(), "utf-8")
+                    msg = str(process.stderr)
                     logger.error(msg)
                 else:
                     msg = f"{Path(filename).name} uploaded."
-                    logger.info(msg)
-                    msg = str(stdout.decode(), "utf-8")
                     logger.info(msg)
 
 
