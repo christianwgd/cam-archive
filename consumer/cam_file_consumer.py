@@ -31,6 +31,9 @@ async def main():
                     stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
                 )
                 stdout, stderr = await process.communicate()
+                logger.info(f"Process completed: {process.returncode}")
+                logger.info(f"Stdout: {stdout.decode()}")
+                logger.info(f"Stderr: {stderr.decode()}")
                 if process.returncode != 0:
                     msg = f"Error processing {Path(filename).name}"
                     logger.error(msg)
