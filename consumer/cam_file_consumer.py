@@ -24,19 +24,22 @@ async def main():
             if change[0] == Change.added:
                 filename = Path(str(change[1])).name
                 msg = f"File created: {filename}, waiting 40 sec to complete upload."
-                await asyncio.sleep(40)
                 logger.info(msg)
+                await asyncio.sleep(40)
                 process = asyncio.create_subprocess_exec(
                     python_executable, manage, "video_consume", Path(filename).name,
                     stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
                 )
+                stdout, stderr = await process.communicate()
                 if process.returncode != 0:
                     msg = f"Error processing {Path(filename).name}"
                     logger.error(msg)
-                    msg = str(process.stderr)
+                    msg = str(stderr.decode(), "utf-8")
                     logger.error(msg)
                 else:
                     msg = f"{Path(filename).name} uploaded."
+                    logger.info(msg)
+                    msg = str(stdout.decode(), "utf-8")
                     logger.info(msg)
 
 
