@@ -25,7 +25,7 @@ async def main():
                 filename = Path(str(change[1])).name
                 msg = f"File created: {filename}, waiting 40 sec to complete upload."
                 logger.info(msg)
-                await asyncio.sleep(40)
+                # await asyncio.sleep(40)
                 process = asyncio.create_subprocess_exec(
                     python_executable, manage, "video_consume", Path(filename).name,
                     stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
