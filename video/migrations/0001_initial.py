@@ -12,17 +12,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Video',
+            name="Video",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('file', models.FileField(upload_to='', verbose_name='Video file')),
-                ('timestamp', models.DateTimeField(verbose_name='timestamp')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                ("file", models.FileField(upload_to="", verbose_name="Video file")),
+                ("timestamp", models.DateTimeField(verbose_name="timestamp")),
             ],
             options={
-                'verbose_name': 'Video',
-                'verbose_name_plural': 'Videos',
-                'ordering': ['timestamp'],
+                "verbose_name": "Video",
+                "verbose_name_plural": "Videos",
+                "ordering": ["timestamp"],
             },
         ),
     ]

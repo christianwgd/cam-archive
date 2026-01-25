@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('video', '0014_ring'),
+        ("video", "0014_ring"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='video',
-            name='telegram',
-            field=models.BooleanField(default=False, help_text='Thumbnail sent to telegram', verbose_name='Sent to telegram'),
+            model_name="video",
+            name="telegram",
+            field=models.BooleanField(default=False, help_text="Thumbnail sent to telegram", verbose_name="Sent to telegram"),
         ),
     ]

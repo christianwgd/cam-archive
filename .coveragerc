@@ -1,6 +1,0 @@
-[run]
-omit =
-    ./manage.py
-    */migrations/*
-    cam_archive/wsgi.py
-    cam_archive/settings.py

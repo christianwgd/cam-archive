@@ -12,17 +12,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Camera',
+            name="Camera",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='name')),
-                ('manufacturer', models.CharField(max_length=255, verbose_name='manufacturer')),
-                ('model', models.CharField(max_length=255, verbose_name='model')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=255, verbose_name="name")),
+                ("manufacturer", models.CharField(max_length=255, verbose_name="manufacturer")),
+                ("model", models.CharField(max_length=255, verbose_name="model")),
             ],
             options={
-                'verbose_name': 'Camera',
-                'verbose_name_plural': 'Cameras',
-                'ordering': ['name'],
+                "verbose_name": "Camera",
+                "verbose_name_plural": "Cameras",
+                "ordering": ["name"],
             },
         ),
     ]

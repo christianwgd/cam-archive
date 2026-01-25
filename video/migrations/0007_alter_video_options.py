@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('video', '0006_video_camera'),
+        ("video", "0006_video_camera"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='video',
-            options={'ordering': ['-timestamp'], 'verbose_name': 'Video', 'verbose_name_plural': 'Videos'},
+            name="video",
+            options={"ordering": ["-timestamp"], "verbose_name": "Video", "verbose_name_plural": "Videos"},
         ),
     ]

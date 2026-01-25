@@ -8,9 +8,9 @@ from camera.models import Camera
 class TestCameraModel(TestCase):
 
     def setUp(self):
-        self.fake = Faker('de_DE')
+        self.fake = Faker("de_DE")
         self.camera = Camera.objects.create(
-            name='Test',
+            name="Test",
             manufacturer=self.fake.word(),
             model=self.fake.word(),
         )
@@ -21,5 +21,5 @@ class TestCameraModel(TestCase):
     def test_absolute_url(self):
         self.assertEqual(
             self.camera.get_absolute_url(),
-            reverse('camera:detail', kwargs={'pk': self.camera.pk})
+            reverse("camera:detail", kwargs={"pk": self.camera.pk}),
         )

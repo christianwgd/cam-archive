@@ -7,7 +7,7 @@ class VideoFilter(django_filters.FilterSet):
     class Meta:
         model = Video
         fields = [
-            'camera'
+            "camera",
         ]
 
-    camera = django_filters.AllValuesFilter(field_name='camera__name')
+    camera = django_filters.AllValuesFilter(field_name="camera__name")

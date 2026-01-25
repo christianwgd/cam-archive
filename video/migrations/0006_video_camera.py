@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('video', '0005_alter_video_file'),
+        ("video", "0005_alter_video_file"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='video',
-            name='camera',
-            field=models.CharField(default='x', max_length=255, verbose_name='camera'),
+            model_name="video",
+            name="camera",
+            field=models.CharField(default="x", max_length=255, verbose_name="camera"),
             preserve_default=False,
         ),
     ]

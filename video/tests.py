@@ -9,24 +9,22 @@ from django.contrib import auth
 from django.contrib.admin import AdminSite
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.management import call_command, CommandError
-from django.test import TestCase, RequestFactory
-from django.utils import timezone, formats
-from django.utils.dateformat import format
+from django.core.management import CommandError, call_command
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from django.utils.timezone import make_aware
+from django.utils import dateformat, formats, timezone
+from faker import Faker
 
 from camera.models import Camera
 from video.admin import VideoAdmin
 from video.models import (
+    Ring,
     Video,
-    get_name_from_file_name,
     get_camera_from_file_name,
+    get_name_from_file_name,
     get_timestamp_from_file_name,
-    get_timestamp_from_string, Ring
+    get_timestamp_from_string,
 )
-from faker import Faker
-
 
 User = auth.get_user_model()
 
@@ -34,42 +32,47 @@ User = auth.get_user_model()
 class TestVideoModel(TestCase):
 
     def setUp(self):
-        self.fake = Faker('de_DE')
-        self.timestamp = make_aware(
-            datetime(2025, 2, 3, 19, 38, 8)
+        self.fake = Faker("de_DE")
+        self.timestamp = datetime(
+            2025, 2, 3, 19, 38, 8,
+            tzinfo=timezone.get_current_timezone(),
         )
         self.camera = Camera.objects.create(
-            name='Test',
+            name="Test",
             manufacturer=self.fake.word(),
             model=self.fake.word(),
         )
-        self.name = f'{self.camera.name}__00_20250203193808.mp4'
-        self.file_name = f'test_files/{self.camera.name}_00_20250203193808.mp4'
+        self.name = f"{self.camera.name}__00_20250203193808.mp4"
+        self.file_name = f"test_files/{self.camera.name}_00_20250203193808.mp4"
         self.video_file_name = self.file_name
-        bytes = open(self.video_file_name, 'rb').read()
-        self.video_file_content = BytesIO(bytes)
-        self.video_file = SimpleUploadedFile(
-            self.video_file_name,
-            self.video_file_content.read(),
-            content_type='video/mp4',
-        )
-        self.video = Video.objects.create(
-            name='Test_00_20250203193808',
-            camera=self.camera,
-            timestamp=self.timestamp,
-            file=self.video_file,
-            thumbnail=None,
-        )
-        self.timestamp_as_string = format(self.video.timestamp, 'YmdHis')
-        for i in range(1, 3):
-            timestamp = timezone.now() + timedelta(hours=i)
-            Video.objects.create(
-                name=f'Test_00_{timestamp}',
+        with Path(self.video_file_name).open("rb") as f:
+            content = f.read()
+            self.video_file_content = BytesIO(content)
+            self.video_file = SimpleUploadedFile(
+                self.video_file_name,
+                self.video_file_content.read(),
+                content_type="video/mp4",
+            )
+            self.video = Video.objects.create(
+                name="Test_00_20250203193808",
                 camera=self.camera,
-                timestamp=timestamp,
+                timestamp=self.timestamp,
                 file=self.video_file,
                 thumbnail=None,
             )
+            self.timestamp_as_string = dateformat.format(
+                self.video.timestamp, "YmdHis",
+            )
+            for i in range(1, 3):
+                timestamp = timezone.now() + timedelta(hours=i)
+                Video.objects.create(
+                    name=f"Test_00_{timestamp}",
+                    camera=self.camera,
+                    timestamp=timestamp,
+                    file=self.video_file,
+                    thumbnail=None,
+                )
+            f.close()
 
     def tearDown(self):
         Video.objects.all().delete()
@@ -80,31 +83,31 @@ class TestVideoModel(TestCase):
     def test_absolute_url(self):
         self.assertEqual(
             self.video.get_absolute_url(),
-            reverse('video:detail', kwargs={'pk': self.video.pk})
+            reverse("video:detail", kwargs={"pk": self.video.pk}),
         )
 
     def test_get_name_from_file_name(self):
         self.assertEqual(
             self.video.name,
-            get_name_from_file_name(self.file_name)
+            get_name_from_file_name(self.file_name),
         )
 
     def test_get_camera_from_file_name(self):
         self.assertEqual(
             self.camera.name,
-            get_camera_from_file_name(self.file_name)
+            get_camera_from_file_name(self.file_name),
         )
 
     def test_get_timestamp_from_file_name(self):
         self.assertEqual(
             self.timestamp_as_string,
-            get_timestamp_from_file_name(self.file_name)
+            get_timestamp_from_file_name(self.file_name),
         )
 
     def test_get_timestamp_from_string(self):
         self.assertEqual(
             self.timestamp,
-            get_timestamp_from_string(self.timestamp_as_string)
+            get_timestamp_from_string(self.timestamp_as_string),
         )
 
     def test_auto_delete_file_on_delete(self):
@@ -127,13 +130,13 @@ class TestVideoModel(TestCase):
         self.assertTrue(self.video.duration > 0)
 
     def test_get_previous_by_timestamp(self):
-        video = Video.objects.order_by('-timestamp').first()
+        video = Video.objects.order_by("-timestamp").first()
         prev_video = video.get_previous_by_timestamp()
         self.assertIsInstance(prev_video, Video)
         self.assertTrue(prev_video.timestamp < video.timestamp)
 
     def test_get_next_by_timestamp(self):
-        video = Video.objects.order_by('timestamp').first()
+        video = Video.objects.order_by("timestamp").first()
         next_video = video.get_next_by_timestamp()
         self.assertIsInstance(next_video, Video)
         self.assertTrue(next_video.timestamp > video.timestamp)
@@ -144,9 +147,9 @@ class VideoAdminActionTests(TestVideoModel):
     def setUp(self):
         super().setUp()
         self.factory = RequestFactory()
-        self.request = self.factory.get('/')
-        self.request.session = 'session'
-        self.request._messages = FallbackStorage(self.request)
+        self.request = self.factory.get("/")
+        self.request.session = "session"
+        self.request._messages = FallbackStorage(self.request)  # noqa: SLF001
         self.video_admin = VideoAdmin(Video, AdminSite())
 
     def test_action_generate_thumbnail_duration_none(self):
@@ -221,12 +224,12 @@ class CommandsTestCase(TestCase):
         self.assertEqual(videos.count(), 1)
         video = videos.first()
         self.assertEqual(video.file.name, "videos/Test_00_20250203193808.mp4")
-        self.assertEqual(video.camera, Camera.objects.get(name='Test'))
+        self.assertEqual(video.camera, Camera.objects.get(name="Test"))
 
     def test_video_consume(self):
         shutil.copy(
-            'test_files/Test_00_20250203193808.mp4',
-            'media/videos/Test_00_20250203193808.mp4'
+            "test_files/Test_00_20250203193808.mp4",
+            "media/videos/Test_00_20250203193808.mp4",
         )
         self.call_command(
             "video_consume",
@@ -234,77 +237,82 @@ class CommandsTestCase(TestCase):
         )
         videos = Video.objects.all()
         self.assertEqual(videos.count(), 1)
-        video = videos.filter(name='Test_00_20250203193808').first()
+        video = videos.filter(name="Test_00_20250203193808").first()
         self.assertEqual(video.file.name, "videos/Test_00_20250203193808.mp4")
-        self.assertEqual(video.camera, Camera.objects.get(name='Test'))
+        self.assertEqual(video.camera, Camera.objects.get(name="Test"))
 
     def test_video_consume_no_file(self):
         with pytest.raises(CommandError):
             self.call_command("video_consume")
 
     def test_video_delete_no_stale(self):
-        self.fake = Faker('de_DE')
-        self.timestamp = make_aware(
-            datetime(2025, 2, 3, 19, 38, 8)
+        self.fake = Faker("de_DE")
+        self.timestamp = datetime(
+            2025, 2, 3, 19, 38, 8,
+            tzinfo=timezone.get_current_timezone(),
         )
         self.camera = Camera.objects.create(
-            name='Test',
+            name="Test",
             manufacturer=self.fake.word(),
             model=self.fake.word(),
         )
-        self.name = f'{self.camera.name}__00_20250203193808.mp4'
-        self.file_name = f'test_files/{self.camera.name}_00_20250203193808.mp4'
+        self.name = f"{self.camera.name}__00_20250203193808.mp4"
+        self.file_name = f"test_files/{self.camera.name}_00_20250203193808.mp4"
         self.video_file_name = self.file_name
-        bytes = open(self.video_file_name, 'rb').read()
-        self.video_file_content = BytesIO(bytes)
-        self.video_file = SimpleUploadedFile(
-            self.video_file_name,
-            self.video_file_content.read(),
-            content_type='video/mp4',
-        )
-        self.timestamp_as_string = format(self.timestamp, 'YmdHis')
-        for i in range(1, 3):
-            timestamp = timezone.now() + timedelta(hours=i)
-            Video.objects.create(
-                name=f'Test_00_{timestamp}',
-                camera=self.camera,
-                timestamp=timestamp,
-                file=self.video_file,
-                thumbnail=None,
+        with Path(self.video_file_name).open("rb") as f:
+            content = f.read()
+            self.video_file_content = BytesIO(content)
+            self.video_file = SimpleUploadedFile(
+                self.video_file_name,
+                self.video_file_content.read(),
+                content_type="video/mp4",
             )
-        out = self.call_command("video_delete")
-        self.assertIn("Deleted 0 videos", out)
+            self.timestamp_as_string = format(self.timestamp, "YmdHis")
+            for i in range(1, 3):
+                timestamp = timezone.now() + timedelta(hours=i)
+                Video.objects.create(
+                    name=f"Test_00_{timestamp}",
+                    camera=self.camera,
+                    timestamp=timestamp,
+                    file=self.video_file,
+                    thumbnail=None,
+                )
+            out = self.call_command("video_delete")
+            self.assertIn("Deleted 0 videos", out)
+            f.close()
 
     def test_video_delete(self):
-        self.fake = Faker('de_DE')
+        self.fake = Faker("de_DE")
         self.timestamp = timezone.now() - timedelta(days=15)
         self.camera = Camera.objects.create(
-            name='Test',
+            name="Test",
             manufacturer=self.fake.word(),
             model=self.fake.word(),
         )
-        self.name = f'{self.camera.name}__00_20250203193808.mp4'
-        self.file_name = f'test_files/{self.camera.name}_00_20250203193808.mp4'
+        self.name = f"{self.camera.name}__00_20250203193808.mp4"
+        self.file_name = f"test_files/{self.camera.name}_00_20250203193808.mp4"
         self.video_file_name = self.file_name
-        bytes = open(self.video_file_name, 'rb').read()
-        self.video_file_content = BytesIO(bytes)
-        self.video_file = SimpleUploadedFile(
-            self.video_file_name,
-            self.video_file_content.read(),
-            content_type='video/mp4',
-        )
-        self.timestamp_as_string = format(self.timestamp, 'YmdHis')
-        for i in range(3):
-            timestamp = self.timestamp - timedelta(hours=i)
-            Video.objects.create(
-                name=f'Test_00_{timestamp}',
-                camera=self.camera,
-                timestamp=timestamp,
-                file=self.video_file,
-                thumbnail=None,
+        with Path(self.video_file_name).open("rb") as f:
+            content = f.read()
+            self.video_file_content = BytesIO(content)
+            self.video_file = SimpleUploadedFile(
+                self.video_file_name,
+                self.video_file_content.read(),
+                content_type="video/mp4",
             )
-        out = self.call_command("video_delete")
-        self.assertIn("Deleted 3 videos", out)
+            self.timestamp_as_string = format(self.timestamp, "YmdHis")
+            for i in range(3):
+                timestamp = self.timestamp - timedelta(hours=i)
+                Video.objects.create(
+                    name=f"Test_00_{timestamp}",
+                    camera=self.camera,
+                    timestamp=timestamp,
+                    file=self.video_file,
+                    thumbnail=None,
+                )
+            out = self.call_command("video_delete")
+            self.assertIn("Deleted 3 videos", out)
+            f.close()
 
 
 class RingTestCase(TestCase):
@@ -320,9 +328,9 @@ class RingTestCase(TestCase):
             str(self.ring),
             formats.date_format(
                 self.ring.timestamp,
-                format='DATETIME_FORMAT',
-                use_l10n=True
-            )
+                format="DATETIME_FORMAT",
+                use_l10n=True,
+            ),
         )
 
     def test_ring_view_function(self):
@@ -330,7 +338,7 @@ class RingTestCase(TestCase):
             "Content-Type" : "application/json",
             "x-api-key": settings.API_TOKEN,
         }
-        response = self.client.get(reverse('video:ring'), headers=headers)
+        response = self.client.get(reverse("video:ring"), headers=headers)
         self.assertEqual(response.status_code, 201)
         rings = Ring.objects.all()
         # There should be 2 ring instances, the one created in setUp

@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('camera', '0001_initial'),
+        ("camera", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='camera',
-            name='manufacturer',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='manufacturer'),
+            model_name="camera",
+            name="manufacturer",
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="manufacturer"),
         ),
         migrations.AlterField(
-            model_name='camera',
-            name='model',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='model'),
+            model_name="camera",
+            name="model",
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="model"),
         ),
     ]

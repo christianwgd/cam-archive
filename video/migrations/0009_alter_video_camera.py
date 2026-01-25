@@ -7,14 +7,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('camera', '0001_initial'),
-        ('video', '0008_alter_video_name'),
+        ("camera", "0001_initial"),
+        ("video", "0008_alter_video_name"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='video',
-            name='camera',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='camera.camera', verbose_name='camera'),
+            model_name="video",
+            name="camera",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="camera.camera", verbose_name="camera"),
         ),
     ]
