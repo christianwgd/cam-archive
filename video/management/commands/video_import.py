@@ -24,11 +24,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):  # noqa: ARG002
         Video.objects.all().delete()
-        # traverse root directory, and list directories as dirs and files as files
+        # traverse the root directory and list directories as dirs and files as files
         home_dir = options["import_dir"]
         for root, _dirs, files in os.walk(home_dir):
             for file_name in files:
-                if mimetypes.guess_type(file_name)[0] not in ["video/mp4"]:
+                if mimetypes.guess_type(file_name)[0] != "video/mp4":
                     continue
                 camera, _created = Camera.objects.get_or_create(
                     name=get_camera_from_file_name(file_name),
