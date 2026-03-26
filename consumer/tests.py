@@ -30,7 +30,7 @@ async def test_wait_for_file_stability_returns_true_when_file_stable(
     monkeypatch.setattr(
         consumer_module.asyncio,
         "get_running_loop",
-        lambda: FakeLoop(),
+        lambda: FakeLoop(),  # noqa: PLW0108
     )
     monkeypatch.setattr(consumer_module.asyncio, "sleep", AsyncMock())
 
@@ -41,7 +41,7 @@ async def test_wait_for_file_stability_returns_true_when_file_stable(
         max_wait=10,
     )
 
-    assert result is True
+    assert result is True  # noqa: S101
 
 
 @pytest.mark.asyncio
@@ -61,7 +61,7 @@ async def test_wait_for_file_stability_returns_false_on_timeout(
     monkeypatch.setattr(
         consumer_module.asyncio,
         "get_running_loop",
-        lambda: FakeLoop(),
+        lambda: FakeLoop(),  # noqa: PLW0108
     )
     monkeypatch.setattr(consumer_module.asyncio, "sleep", AsyncMock())
 
@@ -72,7 +72,7 @@ async def test_wait_for_file_stability_returns_false_on_timeout(
         max_wait=4,
     )
 
-    assert result is False
+    assert result is False  # noqa: S101
 
 
 @pytest.mark.asyncio
@@ -150,7 +150,8 @@ async def test_main_logs_error_when_processing_change_raises_exception(consumer_
         yield {(consumer_module.Change.added, Path("test_files/tmp/file.mp4"))}
 
     async def boom(_change):
-        raise RuntimeError("boom")
+        error_msg = "boom"
+        raise RuntimeError(error_msg)
 
     logger_exception = Mock()
 
