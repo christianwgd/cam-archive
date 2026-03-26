@@ -6,7 +6,13 @@ from pathlib import Path
 
 from watchfiles import Change, awatch
 
-from .config import directory_to_watch, log_file, manage, python_executable
+try:
+    from config import directory_to_watch, log_file, manage, python_executable
+except ImportError:  # pragma: no cover
+    directory_to_watch = "media/videos"
+    log_file = "log/cam_consumer.log"
+    manage = "manage.py"
+    python_executable = "python"
 
 logger = logging.getLogger("cam-archive")
 handler = RotatingFileHandler(log_file, maxBytes=2000000, backupCount=5)
