@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import subprocess
-import time
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -18,29 +17,73 @@ logging.basicConfig(
 )
 
 
+async def wait_for_file_stability(
+    file_path: Path,
+    quiet_period: int = 10,
+    poll_interval: int = 2,
+    max_wait: int = 300,
+) -> bool:
+    last_change = asyncio.get_running_loop().time()
+    previous_snapshot = None
+    deadline = last_change + max_wait
+
+    while asyncio.get_running_loop().time() < deadline:
+        if not file_path.exists():  # noqa: ASYNC240
+            previous_snapshot = None
+            last_change = asyncio.get_running_loop().time()
+            await asyncio.sleep(poll_interval)
+            continue
+
+        current_snapshot = (file_path.stat().st_size, file_path.stat().st_mtime)  # noqa: ASYNC240
+        if current_snapshot != previous_snapshot:
+            previous_snapshot = current_snapshot
+            last_change = asyncio.get_running_loop().time()
+        elif asyncio.get_running_loop().time() - last_change >= quiet_period:
+            return True
+
+        await asyncio.sleep(poll_interval)
+
+    return False
+
+
 async def main():
     async for changes in awatch(directory_to_watch):
         for change in changes:
-            msg = f"Processing change: {change}"
-            logger.info(msg)
-            if change[0] == Change.added:
-                filename = Path(str(change[1])).name
-                msg = f"File created: {filename}, waiting 40 sec to complete upload."
+            try:
+                msg = f"Processing change: {change}"
                 logger.info(msg)
-                time.sleep(40)  # noqa: ASYNC251
-                logger.info("Starting video consuming process...")
-                process = subprocess.run(  # noqa: S603, ASYNC221
-                    [python_executable, manage, "video_consume", Path(filename).name],
-                    capture_output=True, check=False,
-                )
-                if process.returncode != 0:
-                    msg = f"Error processing {Path(filename).name}"
-                    logger.error(msg)
-                    msg = str(process.stderr)
-                    logger.error(msg)
-                else:
-                    msg = f"{Path(filename).name} uploaded."
+                if change[0] == Change.added:
+                    file_path = Path(str(change[1]))
+                    filename = file_path.name
+                    msg = f"File created: {filename}, waiting for upload to complete."
                     logger.info(msg)
 
+                    if not await wait_for_file_stability(file_path):
+                        logger.error("File did not become stable in time: %s", filename)
+                        continue
 
-loop = asyncio.run(main())
+                    logger.info("Starting video consuming process...")
+                    process = await asyncio.create_subprocess_exec(
+                        python_executable,
+                        manage,
+                        "video_consume",
+                        filename,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                    )
+                    stdout, stderr = await process.communicate()
+                    if process.returncode != 0:
+                        msg = f"Error processing {filename}"
+                        logger.error(msg)
+                        if stderr:
+                            logger.error(stderr.decode("utf-8", errors="replace"))
+                    else:
+                        msg = f"{filename} uploaded."
+                        logger.info(msg)
+                        if stdout:
+                            logger.info(stdout.decode("utf-8", errors="replace"))
+            except Exception:
+                logger.exception("Unexpected error while processing file change")
+
+
+asyncio.run(main())
