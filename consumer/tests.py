@@ -144,7 +144,6 @@ async def test_process_change_logs_error_when_subprocess_fails(
 
 
 @pytest.mark.asyncio
-@pytest.mark.asyncio
 async def test_main_logs_error_when_processing_change_raises_exception(consumer_module, monkeypatch):
     async def fake_awatch(_directory):
         yield {(consumer_module.Change.added, Path("test_files/tmp/file.mp4"))}
