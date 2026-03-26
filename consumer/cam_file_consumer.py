@@ -1,3 +1,5 @@
+import os
+import sys
 import asyncio
 import logging
 import subprocess
@@ -8,11 +10,16 @@ from django.conf import settings
 from watchfiles import Change, awatch
 
 if not settings.configured:
-    settings.configure()
+    sys.path.append(
+        os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+    )
+    from cam_archive import settings
+
 directory_to_watch = getattr(settings, "WATCH_DIR", "media/videos")
 log_file = getattr(settings, "CONSUMER_LOG_FILE", "log/cam_consumer.log")
 manage = getattr(settings, "MANAGE", "manage.py")
 python_executable = getattr(settings, "PYTHON_EXECUTABLE", "python")
+print(directory_to_watch, log_file, manage, python_executable)
 
 logger = logging.getLogger("cam-archive")
 handler = RotatingFileHandler(log_file, maxBytes=2000000, backupCount=5)
