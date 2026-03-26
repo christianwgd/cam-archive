@@ -55,6 +55,7 @@ jobs:
     - name: Create folder
       run: |
         mkdir -p media/thumbs
+        mkdir -p log
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
