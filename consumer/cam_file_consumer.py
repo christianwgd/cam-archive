@@ -7,6 +7,8 @@ from pathlib import Path
 from django.conf import settings
 from watchfiles import Change, awatch
 
+if not settings.configured:
+    settings.configure()
 directory_to_watch = getattr(settings, "WATCH_DIR", "media/videos")
 log_file = getattr(settings, "CONSUMER_LOG_FILE", "log/cam_consumer.log")
 manage = getattr(settings, "MANAGE", "manage.py")
