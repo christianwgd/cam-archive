@@ -6,7 +6,7 @@ from pathlib import Path
 
 from watchfiles import Change, awatch
 
-from consumer.config import directory_to_watch, log_file, manage, python_executable
+from .config import directory_to_watch, log_file, manage, python_executable
 
 logger = logging.getLogger("cam-archive")
 handler = RotatingFileHandler(log_file, maxBytes=2000000, backupCount=5)
