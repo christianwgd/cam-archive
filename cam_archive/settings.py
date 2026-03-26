@@ -123,6 +123,7 @@ INSTALLED_APPS = [
     "dark_mode_switch",
     "django_bootstrap_icons",
     "django_bootstrap5",
+    "bootstrap_modal_forms",
 ]
 
 ACCOUNT_ACTIVATION_DAYS = 3

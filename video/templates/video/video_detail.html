@@ -1,9 +1,30 @@
 {% extends "base.html" %}
 {% load static i18n django_bootstrap5 bootstrap_icons %}
 
+{% block bootstrap5_extra_script %}
+{{ block.super }}
+<script src="{% static 'js/bootstrap5.modal.forms.js' %}"></script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', (e) => {
+    modalForm(document.getElementById('id_delete'), {
+        formURL: "{% url 'video:delete' video.id %}",
+        modalID: "#modal",
+        isDeleteForm: true
+    })
+});
+</script>
+{% endblock %}
+
 {% block page_title %}{{ video.timestamp }}{% endblock %}
 
 {% block content %}
+<!-- Modal -->
+<div class="modal fade" role="dialog" id="modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
 <video style="display: block; margin: 0 auto;" width="100%" height="auto" labe="{{ video.name }}"
        {% if video.thumbnail %}poster="{{ video.thumbnail.url }}"{% endif %}
        preload="" controls src="{{ video.file.url }}" type="video/mp4">
@@ -48,6 +69,15 @@
         </a>
         {% endif %}
         {% endwith %}
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col text-end">
+        <button id="id_delete" type="button" class="btn btn-sm btn-danger"
+                data-url="{% url 'video:delete' video.id %}">
+            {% bs_icon 'trash' %}
+        </button>
     </div>
 </div>
 {% endblock %}

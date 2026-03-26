@@ -2,10 +2,13 @@ from logging import getLogger
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET
-from django.views.generic import DetailView
+from django.views.generic import DetailView, DeleteView
 from django_filters.views import FilterView
+from django.utils.translation import gettext_lazy as _
 
 from video.filters import VideoFilter
 from video.models import Ring, Video
@@ -23,6 +26,12 @@ class VideoListView(LoginRequiredMixin, FilterView):
 
 class VideoDetailView(LoginRequiredMixin, DetailView):
     model = Video
+
+
+class VideoDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Video
+    success_url = reverse_lazy('video:list')
+    success_message = _('Video deleted')
 
 
 @require_GET
