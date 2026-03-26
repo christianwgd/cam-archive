@@ -4,15 +4,13 @@ import subprocess
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
+from django.conf import settings
 from watchfiles import Change, awatch
 
-try:
-    from config import directory_to_watch, log_file, manage, python_executable
-except ImportError:  # pragma: no cover
-    directory_to_watch = "media/videos"
-    log_file = "log/cam_consumer.log"
-    manage = "manage.py"
-    python_executable = "python"
+directory_to_watch = getattr(settings, "WATCH_DIR", "media/videos")
+log_file = getattr(settings, "CONSUMER_LOG_FILE", "log/cam_consumer.log")
+manage = getattr(settings, "MANAGE", "manage.py")
+python_executable = getattr(settings, "PYTHON_EXECUTABLE", "python")
 
 logger = logging.getLogger("cam-archive")
 handler = RotatingFileHandler(log_file, maxBytes=2000000, backupCount=5)
