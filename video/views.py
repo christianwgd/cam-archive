@@ -1,3 +1,4 @@
+from datetime import timedelta
 from logging import getLogger
 
 from django.conf import settings
@@ -5,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_GET
 from django.views.generic import DeleteView, DetailView
@@ -22,6 +24,11 @@ class VideoListView(LoginRequiredMixin, FilterView):
     context_object_name = "video_list"
     ordering = ["-timestamp"]
     filterset_class = VideoFilter
+
+    def get_queryset(self):
+        if self.request.method == "GET":
+            return Video.objects.filter(timestamp__date__gte=now().date() -timedelta(days=7))
+        return Video.objects.all()
 
 
 class VideoDetailView(LoginRequiredMixin, DetailView):
