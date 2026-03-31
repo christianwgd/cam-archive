@@ -1,9 +1,9 @@
-from datetime import timedelta
 from logging import getLogger
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Count
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.utils.timezone import now
@@ -26,9 +26,24 @@ class VideoListView(LoginRequiredMixin, FilterView):
     filterset_class = VideoFilter
 
     def get_queryset(self):
-        if self.request.method == "GET":
-            return Video.objects.filter(timestamp__date__gte=now().date() -timedelta(days=7))
-        return Video.objects.all()
+        query_date = self.kwargs.get("date", now().date())
+        return Video.objects.filter(timestamp__date=query_date)
+
+    def get_context_data(self, **kwargs):
+        query_date = self.kwargs.get("date", now().date())
+        context = super().get_context_data(**kwargs)
+        context["query_date"] = query_date
+        days_present = Video.objects.all().order_by(
+            "-timestamp",
+        ).values("timestamp__date").annotate(Count("timestamp__date"))
+        days = [value["timestamp__date"] for value in days_present]
+        context["days"] = days
+        for i in range(len(days)):
+            if days[i] == query_date:
+                context["prev_date"] = days[i+1] if i+1 < len(days) else None
+                context["next_date"] = days[i-1] if i-1 >= 0 else None
+                break
+        return context
 
 
 class VideoDetailView(LoginRequiredMixin, DetailView):

@@ -11,11 +11,18 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.show();
     });
 });
+
+document.addEventListener('DOMContentLoaded',function() {
+    document.querySelector('select[name="day"]').onchange=changeEventHandler;
+},false);
+
+function changeEventHandler(event) {
+    window.location.href = this.options[this.selectedIndex].value;
+}
 </script>
 {% endblock %}
 
-
-{% block page_title %}{% endblock %}
+{% block page_title %}{{ query_date }}{% endblock %}
 
 {% block content %}
 <div class="modal fade mt-5" id="filterModal">
@@ -43,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-<div class="row filter">
+<div class="row filter mb-3">
     <div class="col">
         <h6 class="filter-label">
             {% trans 'Filter' %}
@@ -65,57 +72,59 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-
-{% regroup video_list by timestamp|date:"F Y" as objects_by_month %}
-{% for month_group in objects_by_month %}
-    <div class="row mt-3">
-        <div class="col">
-            <h2>{{ month_group.grouper }}</h2>
-        </div>
-    </div>
-    {% regroup month_group.list by timestamp|date:"l, d. F" as objects_by_day %}
-    <div class="accordion" id="accordion-{{ month_group.grouper|slugify }}">
-    {% for day_group in objects_by_day %}
-        <div class="accordion-item">
-            <h3 class="accordion-header">
-                <button class="accordion-button {% if not forloop.parentloop.first or not forloop.first %}collapsed{% endif %}"
-                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ day_group.grouper|slugify }}"
-                        aria-expanded="true" aria-controls="collapse-{{ day_group.grouper|slugify }}">
-                    {{ day_group.grouper }}&nbsp;
-                    <span class="badge rounded-pill text-bg-secondary">{{ day_group.list|length }}</span>
-                </button>
-            </h3>
-            <div id="collapse-{{ day_group.grouper|slugify }}"
-                 class="accordion-collapse collapse{% if forloop.parentloop.first and forloop.first %} show{% endif %}"
-                 data-bs-parent="#accordion-{{ month_group.grouper|slugify }}">
-                <div class="accordion-body">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
-                    {% for video in day_group.list %}
-                        <div class="col text-center">
-                            <div class="card">
-                                <a href="{{ video.get_absolute_url }}">
-                                    {% if video.thumbnail %}
-                                        <img class="card-img-top" src="{{ video.thumbnail.url }}" alt="">
-                                    {% else %}
-                                        <img class="card-img-top" src="{% static 'img/video-movie.svg' %}" alt="">
-                                    {% endif %}
-                                </a>
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        {{ video.timestamp|date:"H:i:s" }} {{ video.camera }}
-                                        {% if video.telegram %}
-                                            {% bs_icon 'bell-fill' color='#5D8FC2' %}
-                                        {% endif %}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                    </div>
-                </div>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
+{% for video in video_list %}
+    <div class="col text-center">
+        <div class="card">
+            <a href="{{ video.get_absolute_url }}">
+                {% if video.thumbnail %}
+                    <img class="card-img-top" src="{{ video.thumbnail.url }}" alt="">
+                {% else %}
+                    <img class="card-img-top" src="{% static 'img/video-movie.svg' %}" alt="">
+                {% endif %}
+            </a>
+            <div class="card-body">
+                <p class="card-text">
+                    {{ video.timestamp|date:"H:i:s" }} {{ video.camera }}
+                    {% if video.telegram %}
+                        {% bs_icon 'bell-fill' color='#5D8FC2' %}
+                    {% endif %}
+                </p>
             </div>
         </div>
-    {% endfor %}
     </div>
+{% empty %}
+    <p>{% trans 'No videos for this date.' %}</p>
 {% endfor %}
+</div>
+
+<div class="row mt-3">
+    <div class="col">
+        {% if prev_date %}
+        <a href="{% url 'video:list' prev_date %}" class="btn btn-sm btn-secondary">
+            {% bs_icon 'caret-left-fill' %}
+            {{ prev_date }}
+        </a>
+        {% endif %}
+    </div>
+    <div class="col text-center">
+        <div class="mb-3">
+            <select name="day" class="form-select" required="" id="id_day">
+                {% for day in days %}
+                    <option value="{% url 'video:list' day %}" {% if day == query_date %}selected{% endif %}>
+                        {{ day }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col text-end">
+        {% if next_date %}
+        <a href="{% url 'video:list' next_date %}" class="btn btn-sm btn-secondary">
+            {{ next_date }}
+            {% bs_icon 'caret-right-fill' %}
+        </a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

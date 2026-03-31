@@ -13,6 +13,7 @@ from django.core.management import CommandError, call_command
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import dateformat, formats, timezone
+from django.utils.timezone import now
 from faker import Faker
 
 from camera.models import Camera
@@ -140,6 +141,94 @@ class TestVideoModel(TestCase):
         next_video = video.get_next_by_timestamp()
         self.assertIsInstance(next_video, Video)
         self.assertTrue(next_video.timestamp > video.timestamp)
+
+
+class TestVideoViews(TestCase):
+
+    def setUp(self):
+        self.fake = Faker("de_DE")
+        self.timestamp = datetime(
+             2025, 2, 3, 19, 38, 8,
+            tzinfo=timezone.get_current_timezone(),
+        )
+        self.camera = Camera.objects.create(
+            name="Test",
+            manufacturer=self.fake.word(),
+            model=self.fake.word(),
+        )
+        self.name = f"{self.camera.name}__00_20250203193808.mp4"
+        self.file_name = f"test_files/{self.camera.name}_00_20250203193808.mp4"
+        self.video_file_name = self.file_name
+        self.user = User.objects.create_user(
+            username="admin",
+            password="",
+            is_superuser=True,
+        )
+
+    def test_video_list_view(self):
+        timestamp = now() - timedelta(days=3)
+        Video.objects.create(
+            name="Test_00_20250203193808",
+            camera=self.camera,
+            timestamp=timestamp,
+            file=self.video_file_name,
+            thumbnail=None,
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("video:list", kwargs={"date": timestamp.date()}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["video_list"].count(), 1)
+        self.assertEqual(response.context["query_date"], timestamp.date())
+        self.assertEqual(response.context["prev_date"], None)
+        self.assertEqual(response.context["next_date"], None)
+
+    def test_video_list_view_no_next_and_previous(self):
+        timestamp = now()
+        Video.objects.create(
+            name="Test_00_20250203193808",
+            camera=self.camera,
+            timestamp=timestamp,
+            file=self.video_file_name,
+            thumbnail=None,
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("video:list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["video_list"].count(), 1)
+        self.assertEqual(response.context["query_date"], timestamp.date())
+        self.assertEqual(response.context["prev_date"], None)
+        self.assertEqual(response.context["next_date"], None)
+
+    def test_video_list_view_with_next_and_previous(self):
+        timestamp = now()
+        Video.objects.create(
+            name="Test_00_20250203193808",
+            camera=self.camera,
+            timestamp=timestamp,
+            file=self.video_file_name,
+            thumbnail=None,
+        )
+        timestamp_prev = timestamp - timedelta(days=1)
+        Video.objects.create(
+            name="Test_00_20250203193808",
+            camera=self.camera,
+            timestamp=timestamp_prev,
+            file=self.video_file_name,
+        )
+        timestamp_next = timestamp + timedelta(days=1)
+        Video.objects.create(
+            name="Test_00_20250203193808",
+            camera=self.camera,
+            timestamp=timestamp_next,
+            file=self.video_file_name,
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("video:list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["video_list"].count(), 1)
+        self.assertEqual(response.context["query_date"], timestamp.date())
+        self.assertEqual(response.context["prev_date"], timestamp_prev.date())
+        self.assertEqual(response.context["next_date"], timestamp_next.date())
 
 
 class VideoAdminActionTests(TestVideoModel):
@@ -344,3 +433,19 @@ class RingTestCase(TestCase):
         # There should be 2 ring instances, the one created in setUp
         # and the one created from view function call above
         self.assertEqual(rings.count(), 2)
+
+    def test_ring_view_function_no_api_key(self):
+        headers = {
+            "Content-Type" : "application/json",
+        }
+        response = self.client.get(reverse("video:ring"), headers=headers)
+        self.assertEqual(response.status_code, 403)
+
+    def test_ring_view_function_wrong_api_key(self):
+        headers = {
+            "Content-Type" : "application/json",
+            "x-api-key": "wrong_api_key",
+        }
+        response = self.client.get(reverse("video:ring"), headers=headers)
+        self.assertEqual(response.status_code, 403)
+
