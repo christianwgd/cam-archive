@@ -1,5 +1,7 @@
+from datetime import date, datetime
+
 from django.utils import timezone
-from django.utils.dateparse import parse_datetime
+from django.utils.dateparse import parse_date
 
 timezone = timezone.get_default_timezone()
 
@@ -8,8 +10,21 @@ class DateConverter:
     format = "%Y-%m-%d"
 
     def to_python(self, value):
-        naive = parse_datetime(value)
-        return naive.replace(tzinfo=timezone).date()
+        parsed = parse_date(value)
+        if parsed is not None:
+            return parsed
+
+        # Fallback for unexpected inputs; keeps the converter resilient.
+        return value
 
     def to_url(self, value):
-        return value.strftime(self.format)
+        if isinstance(value, str):
+            return value
+
+        if isinstance(value, datetime):
+            value = value.date()
+
+        if isinstance(value, date):
+            return value.strftime(self.format)
+
+        return str(value)

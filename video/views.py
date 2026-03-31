@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count
+from django.db.models.functions import TruncDay
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.utils.timezone import now
@@ -33,16 +34,23 @@ class VideoListView(LoginRequiredMixin, FilterView):
         query_date = self.kwargs.get("date", now().date())
         context = super().get_context_data(**kwargs)
         context["query_date"] = query_date
-        days_present = Video.objects.all().order_by(
-            "-timestamp",
-        ).values("timestamp__date").annotate(Count("timestamp__date"))
-        days = [value["timestamp__date"] for value in days_present]
+
+        days_present = Video.objects.all().annotate(
+            ts_date=TruncDay("timestamp"),
+        ).values(
+            "ts_date",
+        ).annotate(
+            date=Count("ts_date"),
+        ).order_by("-ts_date")
+
+        days = [value["ts_date"].date() for value in days_present]
         context["days"] = days
         for i in range(len(days)):
             if days[i] == query_date:
                 context["prev_date"] = days[i+1] if i+1 < len(days) else None
                 context["next_date"] = days[i-1] if i-1 >= 0 else None
                 break
+
         return context
 
 

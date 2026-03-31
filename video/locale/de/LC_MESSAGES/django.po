@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-26 12:41+0100\n"
+"POT-Creation-Date: 2026-03-31 14:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,15 +101,19 @@ msgstr "\"%(object)s\" wirklich löschen?"
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/video/video_list.html:27 templates/video/video_list.html:49
-#: templates/video/video_list.html:51
+#: templates/video/video_list.html:34 templates/video/video_list.html:86
+#: templates/video/video_list.html:88
 msgid "Filter"
 msgstr ""
 
-#: templates/video/video_list.html:54
+#: templates/video/video_list.html:91
 msgid "Remove filter"
 msgstr "Filter entfernen"
 
-#: views.py:34
+#: templates/video/video_list.html:127
+msgid "No videos for this date."
+msgstr "Keine Videos für diesen Tag."
+
+#: views.py:64
 msgid "Video deleted"
 msgstr "Video gelöscht"

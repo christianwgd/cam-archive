@@ -50,6 +50,36 @@ function changeEventHandler(event) {
     </div>
 </div>
 
+<div class="row mt-3">
+    <div class="col">
+        {% if prev_date %}
+        <a href="{% url 'video:list' prev_date|date:"Y-m-d" %}" class="btn btn-sm btn-secondary">
+            {% bs_icon 'caret-left-fill' %}
+            {{ prev_date }}
+        </a>
+        {% endif %}
+    </div>
+    <div class="col text-center">
+        <div class="mb-3">
+            <select name="day" class="form-select" required="" id="id_day">
+                {% for day in days %}
+                    <option value="{% url 'video:list' day|date:'Y-m-d' %}" {% if day == query_date %}selected{% endif %}>
+                        {{ day|date:"DATE_FORMAT" }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col text-end">
+        {% if next_date %}
+        <a href="{% url 'video:list' next_date|date:"Y-m-d" %}" class="btn btn-sm btn-secondary">
+            {{ next_date }}
+            {% bs_icon 'caret-right-fill' %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
 <div class="row filter mb-3">
     <div class="col">
         <h6 class="filter-label">
@@ -96,35 +126,5 @@ function changeEventHandler(event) {
 {% empty %}
     <p>{% trans 'No videos for this date.' %}</p>
 {% endfor %}
-</div>
-
-<div class="row mt-3">
-    <div class="col">
-        {% if prev_date %}
-        <a href="{% url 'video:list' prev_date %}" class="btn btn-sm btn-secondary">
-            {% bs_icon 'caret-left-fill' %}
-            {{ prev_date }}
-        </a>
-        {% endif %}
-    </div>
-    <div class="col text-center">
-        <div class="mb-3">
-            <select name="day" class="form-select" required="" id="id_day">
-                {% for day in days %}
-                    <option value="{% url 'video:list' day %}" {% if day == query_date %}selected{% endif %}>
-                        {{ day }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    <div class="col text-end">
-        {% if next_date %}
-        <a href="{% url 'video:list' next_date %}" class="btn btn-sm btn-secondary">
-            {{ next_date }}
-            {% bs_icon 'caret-right-fill' %}
-        </a>
-        {% endif %}
-    </div>
 </div>
 {% endblock %}
