@@ -13,7 +13,7 @@ from django.core.management import CommandError, call_command
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import dateformat, formats, timezone
-from django.utils.timezone import now
+from django.utils.timezone import localtime, now
 from faker import Faker
 
 from camera.models import Camera
@@ -416,7 +416,7 @@ class RingTestCase(TestCase):
         self.assertEqual(
             str(self.ring),
             formats.date_format(
-                self.ring.timestamp,
+                localtime(self.ring.timestamp),
                 format="DATETIME_FORMAT",
                 use_l10n=True,
             ),

@@ -11,6 +11,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import formats, timezone
+from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 
 from camera.models import Camera
@@ -167,7 +168,7 @@ class Ring(models.Model):
 
     def __str__(self):
         return formats.date_format(
-            self.timestamp,
+            localtime(self.timestamp),
             format="DATETIME_FORMAT",
             use_l10n=True,
         )
