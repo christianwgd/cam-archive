@@ -1,6 +1,6 @@
 import shutil
 import subprocess
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from logging import getLogger
 from pathlib import Path
@@ -11,7 +11,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import formats, timezone
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, now
 from django.utils.translation import gettext_lazy as _
 
 from camera.models import Camera
@@ -111,8 +111,16 @@ class Video(models.Model):
             self.save()
 
     def check_send_thumbnail(self):  # pragma: no cover
+        # Delete expired ring signals
+        exp_minutes = getattr(settings, "RING_EXPIRATION_MINUTES", 5)
+        expired = Ring.objects.filter(timestamp__lt=now()-timedelta(minutes=exp_minutes))
+        msg = f"Deleting expired ring signals: {expired.count()}"
+        logger.info(msg)
+        expired.delete()
+        # Check for ring signals
         ring_signals = Ring.objects.all()
         msg = f"Checking for ring signals: {ring_signals.count()}"
+        logger.info(msg)
         if ring_signals.count() > 0 and self.thumbnail:
             ring = ring_signals.first()
             msg = f"Sending thumbnail to Telegram for ring at {ring.timestamp}"
@@ -121,6 +129,7 @@ class Video(models.Model):
             # rings are left over from double pressing bell button
             ring_signals.delete()
             msg = f"Deleted, should be 0: {Ring.objects.all().count()}"
+            logger.info(msg)
             token = getattr(settings, "TELEGRAM_TOKEN", None)
             chat_id = getattr(settings, "TELEGRAM_CHAT_ID", None)
             api_url = f"https://api.telegram.org/bot{token}/sendPhoto"
