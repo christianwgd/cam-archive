@@ -134,6 +134,9 @@ BOOTSTRAP5 = {
     # 'theme_url': '/static/css/bootstrap.min.css',
 }
 
+# bootstrap-icons cache
+BS_ICONS_CACHE = STATIC_ROOT / 'icon_cache'
+
 # All-auth settings
 ACCOUNT_LOGIN_METHODS = {"username"}
 MFA_PASSKEY_LOGIN_ENABLED = True
