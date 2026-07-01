@@ -135,7 +135,7 @@ BOOTSTRAP5 = {
 }
 
 # bootstrap-icons cache
-BS_ICONS_CACHE = STATIC_ROOT / 'icon_cache'
+BS_ICONS_CACHE = STATIC_ROOT / "icon_cache"
 
 # All-auth settings
 ACCOUNT_LOGIN_METHODS = {"username"}
