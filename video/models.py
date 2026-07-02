@@ -1,6 +1,6 @@
 import shutil
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
 from logging import getLogger
 from pathlib import Path
@@ -11,7 +11,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import formats, timezone
-from django.utils.timezone import localtime, now
+from django.utils.timezone import localtime
 from django.utils.translation import gettext_lazy as _
 
 from camera.models import Camera
@@ -112,11 +112,11 @@ class Video(models.Model):
 
     def check_send_thumbnail(self):  # pragma: no cover
         # Delete expired ring signals
-        exp_minutes = getattr(settings, "RING_EXPIRATION_MINUTES", 5)
-        expired = Ring.objects.filter(timestamp__lt=now()-timedelta(minutes=exp_minutes))
-        msg = f"Deleting expired ring signals: {expired.count()}"
-        logger.info(msg)
-        expired.delete()
+        # exp_minutes = getattr(settings, "RING_EXPIRATION_MINUTES", 5)
+        # expired = Ring.objects.filter(timestamp__lt=now()-timedelta(minutes=exp_minutes))
+        # msg = f"Deleting expired ring signals: {expired.count()}"
+        # logger.info(msg)
+        # expired.delete()
         # Check for ring signals
         ring_signals = Ring.objects.all()
         msg = f"Checking for ring signals: {ring_signals.count()}"
