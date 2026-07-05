@@ -6,7 +6,7 @@ django-bootstrap5==26.2
 django-bootstrap5-dark-mode-switch==0.2.2
 django-filter==25.2
 django-select2==8.4.8
-pillow==12.2.0
+pillow==12.3.0
 psycopg2-binary==2.9.12
 python-dateutil==2.9.0.post0
 requests==2.34.2
