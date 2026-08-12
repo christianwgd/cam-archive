@@ -22,7 +22,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("import_dir", type=str)
 
-    def handle(self, *args, **options):  # noqa: ARG002
+    def handle(self, *args, **options):
         Video.objects.all().delete()
         # traverse the root directory and list directories as dirs and files as files
         home_dir = options["import_dir"]

@@ -22,7 +22,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("file_name", type=str)
 
-    def handle(self, *args, **options):  # noqa: ARG002
+    def handle(self, *args, **options):
         msg = f"Processing {options['file_name']}"
         logger.info(msg)
         self.style.SUCCESS(msg)

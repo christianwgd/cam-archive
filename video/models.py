@@ -184,7 +184,7 @@ class Ring(models.Model):
 
 
 @receiver(models.signals.post_delete, sender=Video)
-def auto_delete_file_on_delete(sender, instance, **kwargs):  # noqa: ARG001
+def auto_delete_file_on_delete(sender, instance, **kwargs):
     """
     Deletes file from filesystem
     when corresponding `Video` object is deleted.

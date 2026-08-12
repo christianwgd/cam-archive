@@ -238,7 +238,7 @@ class VideoAdminActionTests(TestVideoModel):
         self.factory = RequestFactory()
         self.request = self.factory.get("/")
         self.request.session = "session"
-        self.request._messages = FallbackStorage(self.request)  # noqa: SLF001
+        self.request._messages = FallbackStorage(self.request)
         self.video_admin = VideoAdmin(Video, AdminSite())
 
     def test_action_generate_thumbnail_duration_none(self):

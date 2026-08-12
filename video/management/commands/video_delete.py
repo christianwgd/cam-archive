@@ -10,7 +10,7 @@ from video.models import Video
 class Command(BaseCommand):
     help = "Delete old videos"
 
-    def handle(self, *args, **options):  # noqa: ARG002
+    def handle(self, *args, **options):
         days_keep_videos = getattr(settings, "DAYS_KEEP_VIDEOS", 14)
         keep_date = timezone.now() - timedelta(days=days_keep_videos)
         old_videos = Video.objects.filter(timestamp__date__lt=keep_date.date())
