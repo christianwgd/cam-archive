@@ -96,17 +96,23 @@ async def process_change(change) -> None:
         logger.info(stdout.decode("utf-8", errors="replace"))
 
 
+async def process_change_safe(change) -> None:
+    try:
+        await process_change(change)
+    except Exception:
+        logger.exception("Unexpected error while processing file change")
+
+
 async def main() -> None:
     async for changes in awatch(directory_to_watch):
-        for change in changes:
-            try:
-                await process_change(change)
-            except Exception:
-                logger.exception("Unexpected error while processing file change")
+        await asyncio.gather(
+            *(process_change_safe(change) for change in changes),
+        )
 
 
 def main_cli() -> None:
     asyncio.run(main())
+
 
 if __name__ == "__main__":
     main_cli()
