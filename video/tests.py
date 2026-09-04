@@ -18,6 +18,7 @@ from faker import Faker
 
 from camera.models import Camera
 from video.admin import VideoAdmin
+from video.converters import DateConverter
 from video.models import (
     Ring,
     Video,
@@ -449,3 +450,29 @@ class RingTestCase(TestCase):
         response = self.client.get(reverse("video:ring"), headers=headers)
         self.assertEqual(response.status_code, 403)
 
+
+class DateConverterTest(TestCase):
+
+    def setUp(self):
+        self.converter = DateConverter()
+        self.fake = Faker("de_DE")
+
+    def test_converter_to_python(self):
+        date = self.fake.date()
+        py_val = self.converter.to_python(date)
+        self.assertEqual(str(py_val), date)
+
+    def test_converter_to_url_is_instance(self):
+        date = self.fake.date()
+        url = self.converter.to_url(date)
+        self.assertEqual(str(url), date)
+
+    def test_converter_to_url_is_instance_datetime(self):
+        date = self.fake.date_time()
+        url = self.converter.to_url(date)
+        self.assertEqual(url, date.strftime("%Y-%m-%d"))
+
+    def test_converter_to_url_is_instance_date_object(self):
+        date = self.fake.date_object()
+        url = self.converter.to_url(date)
+        self.assertEqual(url, date.strftime("%Y-%m-%d"))

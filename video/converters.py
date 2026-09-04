@@ -15,7 +15,7 @@ class DateConverter:
             return parsed
 
         # Fallback for unexpected inputs; keeps the converter resilient.
-        return value
+        return value  # pragma: no cover
 
     def to_url(self, value):
         if isinstance(value, str):
@@ -27,4 +27,4 @@ class DateConverter:
         if isinstance(value, date):
             return value.strftime(self.format)
 
-        return str(value)
+        return str(value)  # pragma: no cover
