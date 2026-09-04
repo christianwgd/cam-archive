@@ -7,7 +7,7 @@
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
 {% for camera in camera_list %}
     <div class="col text-center">
-        <div class="card">
+        <div class="card h-100">
             {% if camera.image %}
                 <img class="card-img-top" src="{{ camera.image.url }}" alt="">
             {% else %}
@@ -16,7 +16,13 @@
             <div class="card-body">
                 <p class="card-text">
                     <h4>{{ camera.name}}</h4>
-                    {{ camera.manufacturer }} {{ camera.model }}
+                    {% if camera.ip %}
+                        <a href="http://{{ camera.ip }}" target="_blank" class="btn btn-link">
+                            {{ camera.manufacturer }} {{ camera.model }}
+                        </a>
+                    {% else %}
+                        {{ camera.manufacturer }} {{ camera.model }}
+                    {% endif %}
                 </p>
             </div>
         </div>

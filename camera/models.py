@@ -17,6 +17,7 @@ class Camera(models.Model):
     image = models.ImageField(
         verbose_name=_("Image"), upload_to="camera/", null=True, blank=True,
     )
+    ip = models.GenericIPAddressField(verbose_name=_("IP"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Camera")
