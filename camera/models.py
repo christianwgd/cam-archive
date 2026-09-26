@@ -18,6 +18,7 @@ class Camera(models.Model):
         verbose_name=_("Image"), upload_to="camera/", null=True, blank=True,
     )
     ip = models.GenericIPAddressField(verbose_name=_("IP"), null=True, blank=True)
+    door = models.BooleanField(verbose_name=_("Door"), default=False)
 
     class Meta:
         verbose_name = _("Camera")

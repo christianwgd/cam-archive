@@ -121,7 +121,7 @@ class Video(models.Model):
         ring_signals = Ring.objects.all()
         msg = f"Checking for ring signals: {ring_signals.count()}"
         logger.info(msg)
-        if ring_signals.count() > 0 and self.thumbnail:
+        if ring_signals.count() > 0 and self.thumbnail and self.camera.door:
             ring = ring_signals.first()
             msg = f"Sending thumbnail to Telegram for ring at {ring.timestamp}"
             logger.info(msg)
