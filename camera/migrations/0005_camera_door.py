@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('camera', '0004_camera_ip'),
+        ("camera", "0004_camera_ip"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='camera',
-            name='door',
-            field=models.BooleanField(default=False, verbose_name='Door'),
+            model_name="camera",
+            name="door",
+            field=models.BooleanField(default=False, verbose_name="Door"),
         ),
     ]
