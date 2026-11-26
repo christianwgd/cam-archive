@@ -24,6 +24,10 @@ jobs:
       uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install LDAP build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libldap2-dev libsasl2-dev libssl-dev
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
@@ -56,6 +60,10 @@ jobs:
       run: |
         mkdir -p media/thumbs
         mkdir -p log
+    - name: Install LDAP build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libldap2-dev libsasl2-dev libssl-dev
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
