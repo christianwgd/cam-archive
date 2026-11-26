@@ -1,9 +1,9 @@
 # Django settings for camera archive project.
 
 import sys
-import ldap
 from pathlib import Path
-from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+
+import ldap
 
 # turn warnings into exception...
 # import warnings
@@ -12,6 +12,7 @@ from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 #     RuntimeWarning, r'django\.db\.models\.fields')
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.contrib import messages
+from django_auth_ldap.config import GroupOfNamesType, LDAPSearch
 
 BASE_DIR = Path(Path(Path(__file__).resolve()).parent).parent
 PROJECT_APP_PATH = Path(Path(__file__).resolve()).parent
@@ -178,7 +179,7 @@ AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
     ldap.SCOPE_SUBTREE,
     "(objectClass=groupOfUniqueNames)",
 )
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr='cn')
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 
 # Simple group restrictions
 AUTH_LDAP_REQUIRE_GROUP = (
