@@ -173,15 +173,17 @@ AUTH_LDAP_USER_DN_TEMPLATE = (
 )
 
 # Set up the basic group parameters.
-# AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-#     'ou=wgdnet_user,ou=groups,dc=wgdsrv,dc=local',
-#     ldap.SCOPE_SUBTREE,
-#     '(objectClass=groupOfNames)',
-# )
-# AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr='cn')
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    "ou=groups,dc=wgdsrv,dc=local",
+    ldap.SCOPE_SUBTREE,
+    "(objectClass=groupOfUniqueNames)",
+)
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr='cn')
 
 # Simple group restrictions
-# AUTH_LDAP_REQUIRE_GROUP = 'cn=enabled,ou=wgdnet_user,ou=groups,dc=wgdsrv,dc=local'
+AUTH_LDAP_REQUIRE_GROUP = (
+    "cn=wgdnet_user,ou=groups,dc=wgdsrv,dc=local"
+)
 # AUTH_LDAP_DENY_GROUP = 'cn=disabled,ou=django,ou=groups,dc=example,dc=com'
 
 # Populate the Django user from the LDAP directory.
